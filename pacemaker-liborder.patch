@@ -1,0 +1,88 @@
+--- Pacemaker-1-0-Pacemaker-1.0.3/pengine/Makefile.am~	2009-04-07 14:18:12.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.3/pengine/Makefile.am	2009-05-11 14:43:46.000000000 +0200
+@@ -50,9 +50,10 @@
+ #		$(top_builddir)/lib/hbclient/libhbclient.la
+ 
+ ptest_SOURCES	= ptest.c 
+-ptest_LDADD	= $(COMMONLIBS)						\
+-		$(top_builddir)/lib/cib/libcib.la			\
+-		$(top_builddir)/lib/transition/libtransitioner.la
++ptest_LDADD	= $(top_builddir)/pengine/libpengine.la           \
++		$(top_builddir)/lib/cib/libcib.la		  \
++		$(top_builddir)/lib/transition/libtransitioner.la \
++		$(COMMONLIBS)
+ 
+ clean-generic:
+ 	rm -f *.log *.debug *~ .gres.* testcases/.gres.*
+--- Pacemaker-1-0-Pacemaker-1.0.3/tools/Makefile.am.orig	2009-04-07 14:18:12.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.3/tools/Makefile.am	2009-05-11 15:01:31.000000000 +0200
+@@ -24,7 +24,7 @@
+ COMMONLIBS	= 							\
+ 		$(top_builddir)/lib/common/libcrmcommon.la		\
+ 		$(top_builddir)/lib/cib/libcib.la			\
+-		-lplumb $(CURSESLIBS) $(CLUSTERLIBS) 
++		-lplumb $(CLUSTERLIBS) $(CURSESLIBS) 
+ 
+ headerdir               = $(pkgincludedir)/crm
+ header_HEADERS		= attrd.h
+@@ -52,8 +52,8 @@
+ noinst_HEADERS		= 
+ 
+ crmadmin_SOURCES	= crmadmin.c
+-crmadmin_LDADD		= $(COMMONLIBS) $(CLUSTERLIBS) \
+-			$(top_builddir)/lib/pengine/libpe_status.la
++crmadmin_LDADD		= $(top_builddir)/lib/pengine/libpe_status.la \
++			$(CLUSTERLIBS) $(COMMONLIBS)
+ 
+ crm_uuid_SOURCES	= crm_uuid.c
+ crm_uuid_LDADD		= $(top_builddir)/lib/common/libcrmcluster.la
+@@ -65,21 +65,21 @@
+ crm_shadow_LDADD	= $(COMMONLIBS) 
+ 
+ crm_node_SOURCES	= ccm_epoche.c
+-crm_node_LDADD		= $(COMMONLIBS) $(CLUSTERLIBS) \
+-			$(top_builddir)/lib/common/libcrmcluster.la
++crm_node_LDADD		= $(top_builddir)/lib/common/libcrmcluster.la \
++			$(CLUSTERLIBS) $(COMMONLIBS)
+ 
+ crm_diff_SOURCES	= xml_diff.c
+ crm_diff_LDADD		= $(COMMONLIBS)
+ 
+ crm_mon_SOURCES		= crm_mon.c
+-crm_mon_LDADD		= $(COMMONLIBS) $(SNMPLIBS) $(ESMTPLIBS) -llrm \
+-			$(top_builddir)/lib/pengine/libpe_status.la
++crm_mon_LDADD		= $(top_builddir)/lib/pengine/libpe_status.la \
++			-llrm $(SNMPLIBS) $(ESMTPLIBS) $(COMMONLIBS)
+ 
+ # Arguments could be made that this should live in crm/pengine
+ crm_verify_SOURCES	= crm_verify.c
+-crm_verify_LDADD	= $(COMMONLIBS) \
++crm_verify_LDADD	= \
+ 			$(top_builddir)/lib/pengine/libpe_status.la \
+-			$(top_builddir)/pengine/libpengine.la
++			$(top_builddir)/pengine/libpengine.la $(COMMONLIBS)
+ 
+ crm_master_SOURCES	= crm_attribute.c
+ crm_master_LDADD	= $(COMMONLIBS)
+@@ -94,9 +94,10 @@
+ crm_failcount_LDADD	= $(COMMONLIBS)
+ 
+ crm_resource_SOURCES	= crm_resource.c
+-crm_resource_LDADD	= $(COMMONLIBS) \
++crm_resource_LDADD	= \
+ 			$(top_builddir)/lib/pengine/libpe_rules.la \
+-			$(top_builddir)/lib/pengine/libpe_status.la
++			$(top_builddir)/lib/pengine/libpe_status.la \
++			$(COMMONLIBS)
+ 
+ iso8601_SOURCES		= test.iso8601.c
+ iso8601_LDADD		= $(COMMONLIBS) 
+@@ -104,7 +105,7 @@
+ # A little trick. Now ccdv can be auto-built but not auto-cleaned.
+ attrd_DEPENDENCIES	= ccdv
+ attrd_SOURCES		= attrd.c
+-attrd_LDADD		= $(COMMONLIBS) $(top_builddir)/lib/common/libcrmcluster.la
++attrd_LDADD		= $(top_builddir)/lib/common/libcrmcluster.la $(COMMONLIBS)
+ 
+ pingd_SOURCES		= pingd.c
+ pingd_LDADD		= $(COMMONLIBS)
