@@ -32,6 +32,8 @@ BuildRequires:	python-devel
 BuildRequires:	swig
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	hearbeat
+Provides:	group(haclient)
+Provides:	user(hacluster)
 Conflicts:	heartbeat < 2.99.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -103,6 +105,10 @@ rm -r $RPM_BUILD_ROOT%{_docdir}/packages
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%pre
+%groupadd -g 60 haclient
+%useradd -u 17 -d /var/lib/heartbeat/cores/hacluster -c "Heartbeat User" -g haclient hacluster
 
 %files
 %defattr(644,root,root,755)
