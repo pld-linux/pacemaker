@@ -102,6 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 rm -r $RPM_BUILD_ROOT%{_docdir}/packages
+rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -114,7 +115,24 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc doc/README* doc/*.html doc/*.txt doc/AUTHORS doc/Design
 %{_datadir}/pacemaker
-%{_libdir}/heartbeat/*
+%dir %{_libdir}/heartbeat/plugins/RAExec
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/RAExec/*.so
+%dir %{_libdir}/heartbeat/stonithdtest
+%attr(755,root,root) %{_libdir}/heartbeat/stonithdtest/apitest
+%attr(755,root,root) %{_libdir}/heartbeat/atest
+%attr(755,root,root) %{_libdir}/heartbeat/attrd
+%attr(755,root,root) %{_libdir}/heartbeat/cib
+%attr(755,root,root) %{_libdir}/heartbeat/cibmon
+%attr(755,root,root) %{_libdir}/heartbeat/crmd
+%attr(755,root,root) %{_libdir}/heartbeat/haresources2cib.py
+%attr(755,root,root) %{_libdir}/heartbeat/hb2openais.sh
+%attr(755,root,root) %{_libdir}/heartbeat/pengine
+%attr(755,root,root) %{_libdir}/heartbeat/pingd
+%attr(755,root,root) %{_libdir}/heartbeat/stonithd
+%{_libdir}/heartbeat/crm_primitive.py
+%{_libdir}/heartbeat/hb2openais-helper.py
+%{_libdir}/heartbeat/*.py[co]
+
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
 %attr(755,root,root) %{_sbindir}/crm_diff
@@ -137,8 +155,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-%dir %{_libdir}/ocf
-%dir %{_libdir}/ocf/resource.d
 %{_libdir}/ocf/resource.d/pacemaker
 #%{_libexecdir}/lcrso/pacemaker.lcrso
 
