@@ -31,7 +31,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	swig
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	hearbeat
+Requires:	heartbeat
 Provides:	group(haclient)
 Provides:	user(hacluster)
 Conflicts:	heartbeat < 2.99.0
