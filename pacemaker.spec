@@ -5,7 +5,7 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.3
-Release:	0.1
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
@@ -155,7 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-%{_libdir}/ocf/resource.d/pacemaker
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker
 #%{_libexecdir}/lcrso/pacemaker.lcrso
 
 %files libs
