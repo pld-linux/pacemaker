@@ -1,0 +1,61 @@
+diff -ru Pacemaker-1-0-Pacemaker-1.0.9.1.orig/pengine/Makefile.am Pacemaker-1-0-Pacemaker-1.0.9.1/pengine/Makefile.am
+--- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/pengine/Makefile.am	2010-06-23 20:08:40.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.9.1/pengine/Makefile.am	2011-04-28 08:53:55.536677098 +0200
+@@ -58,6 +58,7 @@
+ # -L$(top_builddir)/lib/pils -lpils -export-dynamic -module -avoid-version 
+ libpengine_la_SOURCES	= pengine.c allocate.c utils.c constraints.c \
+ 			native.c group.c clone.c master.c graph.c
++libpengine_la_LIBADD	= $(top_builddir)/lib/pengine/libpe_status.la
+ 
+ pengine_SOURCES	= main.c
+ pengine_LDADD	= $(COMMONLIBS)	$(top_builddir)/lib/cib/libcib.la
+diff -ru Pacemaker-1-0-Pacemaker-1.0.9.1.orig/tools/Makefile.am Pacemaker-1-0-Pacemaker-1.0.9.1/tools/Makefile.am
+--- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/tools/Makefile.am	2010-06-23 20:08:40.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.9.1/tools/Makefile.am	2011-04-28 09:38:06.620010890 +0200
+@@ -85,7 +85,7 @@
+ crm_diff_LDADD		= $(COMMONLIBS)
+ 
+ crm_mon_SOURCES		= crm_mon.c
+-crm_mon_LDADD		= $(COMMONLIBS) $(SNMPLIBS) $(ESMTPLIBS) -llrm \
++crm_mon_LDADD		= $(COMMONLIBS) $(SNMPLIBS) $(ESMTPLIBS) -llrm -ltinfo \
+ 			$(top_builddir)/lib/pengine/libpe_status.la
+ 
+ # Arguments could be made that this should live in crm/pengine
+--- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/pengine/Makefile.am	2010-06-23 20:08:40.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/pengine/Makefile.am	2011-04-28 10:04:50.773343305 +0200
+@@ -31,10 +31,13 @@
+ 
+ libpe_rules_la_LDFLAGS	= -version-info 2:0:0
+ libpe_rules_la_SOURCES	= $(rule_files)
++libpe_rules_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
+ 
+ libpe_status_la_LDFLAGS	= -version-info 2:0:0
+ libpe_status_la_SOURCES	=  $(rule_files) $(status_files)
+-libpe_status_la_LIBADD	= -llrm
++libpe_status_la_LIBADD	= -llrm $(CURSESLIBS) \
++			  $(top_builddir)/lib/common/libcrmcommon.la \
++			  $(top_builddir)/lib/cib/libcib.la
+ 
+ clean-generic:
+ 	rm -f *.log *.debug *~
+--- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/transition/Makefile.am	2010-06-23 20:08:40.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/transition/Makefile.am	2011-04-28 10:06:49.623343760 +0200
+@@ -29,6 +29,7 @@
+ 
+ libtransitioner_la_LDFLAGS	= -version-info 1:0:0
+ libtransitioner_la_CFLAGS	= -I$(top_builddir)
++libtransitioner_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
+ 
+ clean-generic:
+ 	rm -f *~
+--- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/Makefile.am	2010-06-23 20:08:40.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/Makefile.am	2011-04-28 10:09:28.876677338 +0200
+@@ -18,7 +18,7 @@
+ MAINTAINERCLEANFILES    = Makefile.in
+ 
+ ## Subdirectories...
+-SUBDIRS	= common pengine transition cib fencing plugins
++SUBDIRS	= common cib pengine transition fencing plugins
+ DIST_SUBDIRS =  $(SUBDIRS) ais
+ 
+ if BUILD_AIS_SUPPORT

@@ -1,5 +1,5 @@
---- Pacemaker-1-0-Pacemaker-1.0.3/configure.in.orig	2009-05-11 14:26:54.000000000 +0200
-+++ Pacemaker-1-0-Pacemaker-1.0.3/configure.in	2009-05-11 14:26:54.000000000 +0200
+--- Pacemaker-1-0-Pacemaker-1.0.3/configure.ac.orig	2009-05-11 14:26:54.000000000 +0200
++++ Pacemaker-1-0-Pacemaker-1.0.3/configure.ac	2009-05-11 14:26:54.000000000 +0200
 @@ -746,8 +746,12 @@
  	      [
  #if defined(HAVE_CURSES_H)

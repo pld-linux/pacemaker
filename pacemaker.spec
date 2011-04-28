@@ -1,21 +1,21 @@
-#
-# TODO:
-#	- OpenAIS support
-#
+%bcond_without	corosync    # by default use heartbeat
+%bcond_with	heartbeat   # by default use heartbeat
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
-Version:	1.0.3
+Version:	1.0.9.1
 Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
-# Source0-md5:	b377be64de0920773168bda3abf54319
+# Source0-md5:	c844d98a5e6163192dd9f073ba9856ff
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-liborder.patch
+Patch2:		%{name}-libs.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bzip2-devel
+%{?with_corosync:BuildRequires:	corosync-devel}
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
@@ -29,9 +29,11 @@ BuildRequires:	net-snmp-devel
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
+BuildRequires:	rpm-pythonprov
 BuildRequires:	swig
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	heartbeat
+%{?with_corosync:Requires:	corosync}
+%{?with_heartbeat:Requires:	heartbeat}
 Provides:	group(haclient)
 Provides:	user(hacluster)
 Conflicts:	heartbeat < 2.99.0
@@ -77,7 +79,8 @@ Static Pacemaker libraries.
 %prep
 %setup -qn Pacemaker-1-0-Pacemaker-%{version}
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}
@@ -87,8 +90,10 @@ Static Pacemaker libraries.
 %{__automake}
 
 %configure \
-	--with-heartbeat \
-	--without-ais \
+	%{?with_heartbeat:--with-heartbeat} \
+	%{!?with_heartbeat:--without-heartbeat} \
+	%{?with_corosync:--with-ais} \
+	%{?without_corosync:--without-ais} \
 	--with-snmp \
 	--with-esmtp \
 	--disable-fatal-warnings
@@ -101,7 +106,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -r $RPM_BUILD_ROOT%{_docdir}/packages
+rm -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 %clean
@@ -113,7 +118,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc doc/README* doc/*.html doc/*.txt doc/AUTHORS doc/Design
+%doc doc/README* doc/*.html doc/*.txt AUTHORS COPYING* doc/Pacemaker_Explained
 %{_datadir}/pacemaker
 %dir %{_libdir}/heartbeat/plugins/RAExec
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/RAExec/*.so
@@ -132,7 +137,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/heartbeat/crm_primitive.py
 %{_libdir}/heartbeat/hb2openais-helper.py
 %{_libdir}/heartbeat/*.py[co]
-
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
 %attr(755,root,root) %{_sbindir}/crm_diff
@@ -151,12 +155,24 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/cibpipe
 %attr(755,root,root) %{_sbindir}/crm_node
 %attr(755,root,root) %{_sbindir}/crm_uuid
+%{py_sitedir}/crm
+%{_datadir}/snmp/mibs/PCMK-MIB.txt
 %{_mandir}/man8/*.8*
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker
-#%{_libexecdir}/lcrso/pacemaker.lcrso
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Dummy
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthCPU
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthSMART
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Stateful
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SysInfo
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
+%{_libexecdir}/lcrso/pacemaker.lcrso
 
 %files libs
 %defattr(644,root,root,755)
