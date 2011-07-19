@@ -1,5 +1,5 @@
-%bcond_without	corosync    # by default use heartbeat
-%bcond_with	heartbeat   # by default use heartbeat
+%bcond_with	corosync    # by default use heartbeat
+%bcond_without	heartbeat   # by default use heartbeat
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
