@@ -162,17 +162,18 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Dummy
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthCPU
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthSMART
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Stateful
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SysInfo
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
+%dir %{_libdir}/ocf/resource.d/pacemaker
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/ClusterMon
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/Dummy
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/HealthCPU
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/HealthSMART
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/Stateful
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/SysInfo
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/SystemHealth
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/controld
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/o2cb
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/ping
+%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/pingd
 
 %files libs
 %defattr(644,root,root,755)
