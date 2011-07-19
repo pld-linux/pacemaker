@@ -3,14 +3,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
-Release:	0.3
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
 # Source0-md5:	5794b812e6a27fc92279bcff4e53f627
 Patch0:		%{name}-ncurses.patch
-Patch1:		%{name}-liborder.patch
-Patch2:		%{name}-libs.patch
+Patch1:		%{name}-libs.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -79,8 +78,7 @@ Static Pacemaker libraries.
 %prep
 %setup -qn Pacemaker-1-0-Pacemaker-%{version}
 %patch0 -p1
-#%patch1 -p1
-%patch2 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
