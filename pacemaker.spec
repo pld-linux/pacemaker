@@ -3,7 +3,7 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
-Release:	0.2
+Release:	0.3
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
@@ -134,8 +134,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/heartbeat/pengine
 %attr(755,root,root) %{_libdir}/heartbeat/pingd
 %attr(755,root,root) %{_libdir}/heartbeat/stonithd
-%{_libdir}/heartbeat/crm_primitive.py
-%{_libdir}/heartbeat/hb2openais-helper.py
+%attr(755,root,root) %{_libdir}/heartbeat/crm_primitive.py
+%attr(755,root,root)%{_libdir}/heartbeat/hb2openais-helper.py
 %{_libdir}/heartbeat/*.py[co]
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
