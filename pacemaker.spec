@@ -155,7 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/crm_uuid
 %{py_sitedir}/crm
 %{py_sitedir}/cts
-%{_datadir}/snmp/mibs/PCMK-MIB.txt
+%{_datadir}/snmp/mibs
 %{_mandir}/man8/*.8*
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
