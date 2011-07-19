@@ -3,7 +3,7 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
-Release:	0.1
+Release:	0.2
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
@@ -19,7 +19,7 @@ BuildRequires:	bzip2-devel
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
-BuildRequires:	heartbeat-devel >= 2.99
+%{?with_heartbeat:BuildRequires: heartbeat-devel >= 2.99}
 BuildRequires:	libesmtp-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
@@ -156,6 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/crm_node
 %attr(755,root,root) %{_sbindir}/crm_uuid
 %{py_sitedir}/crm
+%{py_sitedir}/cts
 %{_datadir}/snmp/mibs/PCMK-MIB.txt
 %{_mandir}/man8/*.8*
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
@@ -172,7 +173,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
-%{_libexecdir}/lcrso/pacemaker.lcrso
 
 %files libs
 %defattr(644,root,root,755)
