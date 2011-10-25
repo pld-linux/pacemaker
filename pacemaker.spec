@@ -1,9 +1,9 @@
-%bcond_with	corosync    # by default use heartbeat
-%bcond_without	heartbeat   # by default use heartbeat
+%bcond_with	corosync	# by default use heartbeat
+%bcond_without	heartbeat	# by default use heartbeat
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
-Release:	1
+Release:	2
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
@@ -30,6 +30,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	swig
+BuildRequires:	pciutils-devel
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_corosync:Requires:	corosync}
 %{?with_heartbeat:Requires:	heartbeat}
@@ -121,6 +122,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/heartbeat/plugins/RAExec
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/RAExec/*.so
 %dir %{_libdir}/heartbeat/stonithdtest
+%dir %{_libdir}/lcrso
+%{_libdir}/lcrso/pacemaker.lcrso
 %attr(755,root,root) %{_libdir}/heartbeat/stonithdtest/apitest
 %attr(755,root,root) %{_libdir}/heartbeat/atest
 %attr(755,root,root) %{_libdir}/heartbeat/attrd
@@ -160,18 +163,18 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-%dir %{_libdir}/ocf/resource.d/pacemaker
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/ClusterMon
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/Dummy
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/HealthCPU
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/HealthSMART
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/Stateful
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/SysInfo
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/SystemHealth
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/controld
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/o2cb
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/ping
-%attr(755,root,root) %{_libdir}/ocf/resource.d/pacemaker/pingd
+%dir %{_prefix}/lib/ocf/resource.d/pacemaker
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Dummy
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthCPU
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthSMART
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Stateful
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SysInfo
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
 
 %files libs
 %defattr(644,root,root,755)
