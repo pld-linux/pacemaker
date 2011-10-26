@@ -31,6 +31,7 @@ BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	swig
 BuildRequires:	pciutils-devel
+BuildRequires:	cluster-glue-libs-devel
 Requires:	%{name}-libs = %{version}-%{release}
 %{?with_corosync:Requires:	corosync}
 %{?with_heartbeat:Requires:	heartbeat}
