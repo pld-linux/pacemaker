@@ -3,11 +3,12 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.0.11
-Release:	2
+Release:	3
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
 # Source0-md5:	5794b812e6a27fc92279bcff4e53f627
+Source1:	%{name}.tmpfiles
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
@@ -102,12 +103,15 @@ Static Pacemaker libraries.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 rm -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
+
+install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -123,8 +127,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/heartbeat/plugins/RAExec
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/RAExec/*.so
 %dir %{_libdir}/heartbeat/stonithdtest
+%if %{with corosync}
 %dir %{_libdir}/lcrso
 %{_libdir}/lcrso/pacemaker.lcrso
+%endif
 %attr(755,root,root) %{_libdir}/heartbeat/stonithdtest/apitest
 %attr(755,root,root) %{_libdir}/heartbeat/atest
 %attr(755,root,root) %{_libdir}/heartbeat/attrd
@@ -176,6 +182,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
+/usr/lib/tmpfiles.d/%{name}.conf
 
 %files libs
 %defattr(644,root,root,755)
