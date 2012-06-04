@@ -2,12 +2,12 @@
 %bcond_without	heartbeat	# by default use heartbeat
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
-Version:	1.0.11
-Release:	3
+Version:	1.0.12
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
-Source0:	http://hg.clusterlabs.org/pacemaker/stable-1.0/archive/Pacemaker-%{version}.tar.bz2
-# Source0-md5:	5794b812e6a27fc92279bcff4e53f627
+Source0:	https://github.com/ClusterLabs/pacemaker-1.0/tarball/Pacemaker-%{version}
+# Source0-md5:	f8ff6475e68ef8ce765305c24dc1d2a5
 Source1:	%{name}.tmpfiles
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
@@ -79,7 +79,7 @@ Requires:	%{name}-devel = %{version}-%{release}
 Static Pacemaker libraries.
 
 %prep
-%setup -qn Pacemaker-1-0-Pacemaker-%{version}
+%setup -qn ClusterLabs-pacemaker-1.0-066152e
 %patch0 -p1
 %patch1 -p1
 
