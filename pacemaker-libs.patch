@@ -1,22 +1,35 @@
---- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/pengine/Makefile.am	2010-06-23 20:08:40.000000000 +0200
-+++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/pengine/Makefile.am	2011-04-28 10:04:50.773343305 +0200
-@@ -31,10 +31,13 @@
+diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/Makefile.am
+--- ClusterLabs-pacemaker-b5b0a7b.orig/lib/Makefile.am	2012-03-28 08:14:13.000000000 +0200
++++ ClusterLabs-pacemaker-b5b0a7b/lib/Makefile.am	2012-06-06 08:26:09.000000000 +0200
+@@ -39,7 +39,7 @@
+ 	rm -f *.pc
+ 
+ ## Subdirectories...
+-SUBDIRS	= common pengine transition cib fencing cluster plugins
++SUBDIRS	= common pengine cib transition fencing cluster plugins
+ DIST_SUBDIRS =  $(SUBDIRS) ais
+ 
+ if BUILD_CS_PLUGIN
+diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/pengine/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/pengine/Makefile.am
+--- ClusterLabs-pacemaker-b5b0a7b.orig/lib/pengine/Makefile.am	2012-03-28 08:14:13.000000000 +0200
++++ ClusterLabs-pacemaker-b5b0a7b/lib/pengine/Makefile.am	2012-06-06 08:28:21.000000000 +0200
+@@ -31,10 +31,12 @@
  
  libpe_rules_la_LDFLAGS	= -version-info 2:0:0
- libpe_rules_la_SOURCES	= $(rule_files)
+ libpe_rules_la_SOURCES	= $(rule_files) 
 +libpe_rules_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
  
- libpe_status_la_LDFLAGS	= -version-info 2:0:0
+ libpe_status_la_LDFLAGS	= -version-info 3:0:0
  libpe_status_la_SOURCES	=  $(rule_files) $(status_files)
--libpe_status_la_LIBADD	= -llrm
-+libpe_status_la_LIBADD	= -llrm -lncurses \
-+			  $(top_builddir)/lib/common/libcrmcommon.la \
-+			  $(top_builddir)/lib/cib/libcib.la
+-libpe_status_la_LIBADD	= -llrm @CURSESLIBS@
++libpe_status_la_LIBADD	= -llrm @CURSESLIBS@ \
++			  $(top_builddir)/lib/common/libcrmcommon.la
  
  clean-generic:
  	rm -f *.log *.debug *~
---- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/transition/Makefile.am	2010-06-23 20:08:40.000000000 +0200
-+++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/transition/Makefile.am	2011-04-28 10:06:49.623343760 +0200
+diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/transition/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/transition/Makefile.am
+--- ClusterLabs-pacemaker-b5b0a7b.orig/lib/transition/Makefile.am	2012-03-28 08:14:13.000000000 +0200
++++ ClusterLabs-pacemaker-b5b0a7b/lib/transition/Makefile.am	2012-06-06 08:22:40.000000000 +0200
 @@ -29,6 +29,7 @@
  
  libtransitioner_la_LDFLAGS	= -version-info 1:0:0
@@ -25,14 +38,3 @@
  
  clean-generic:
  	rm -f *~
---- Pacemaker-1-0-Pacemaker-1.0.9.1.orig/lib/Makefile.am	2010-06-23 20:08:40.000000000 +0200
-+++ Pacemaker-1-0-Pacemaker-1.0.9.1/lib/Makefile.am	2011-04-28 10:09:28.876677338 +0200
-@@ -18,7 +18,7 @@
- MAINTAINERCLEANFILES    = Makefile.in
- 
- ## Subdirectories...
--SUBDIRS	= common pengine transition cib fencing plugins
-+SUBDIRS	= common cib pengine transition fencing plugins
- DIST_SUBDIRS =  $(SUBDIRS) ais
- 
- if BUILD_AIS_SUPPORT
