@@ -139,7 +139,9 @@ rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
+%if %{with corosync}
 mv $RPM_BUILD_ROOT/etc/init.d $RPM_BUILD_ROOT/etc/rc.d
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
