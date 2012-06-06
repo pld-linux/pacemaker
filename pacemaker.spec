@@ -16,6 +16,7 @@ Source0:	ClusterLabs-pacemaker-Pacemaker-%{version}-0-gee0730e.tar.gz
 Source1:	%{name}.tmpfiles
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
+Patch2:		%{name}-awk.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -109,6 +110,7 @@ Static Pacemaker libraries.
 %setup -qn ClusterLabs-pacemaker-b5b0a7b
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}
