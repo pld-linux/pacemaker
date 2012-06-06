@@ -2,6 +2,7 @@
 %bcond_without	heartbeat	# by default use heartbeat
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
+# version 1.1 is on the pacemaker-1_1 branch
 Version:	1.0.12
 Release:	1
 License:	GPL v2+; LGPL v2.1+
