@@ -7,7 +7,7 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.1.7
-Release:	0.1
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 # https://github.com/ClusterLabs/pacemaker/tarball/Pacemaker-%{version}
@@ -125,6 +125,7 @@ Static Pacemaker libraries.
 	--with-corosync%{!?with_corosync:=no} \
 	--with-snmp \
 	--with-esmtp \
+	--with-initdir=/etc/rc.d/init.d \
 	--disable-fatal-warnings
 
 %{__make}
@@ -140,10 +141,6 @@ rm -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
-
-%if %{with corosync}
-mv $RPM_BUILD_ROOT/etc/init.d $RPM_BUILD_ROOT/etc/rc.d
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
