@@ -113,7 +113,9 @@ Static Pacemaker libraries.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%if %{with corosync}
 %patch3 -p1
+%endif
 
 %build
 %{__libtoolize}
