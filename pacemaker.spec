@@ -17,6 +17,7 @@ Source1:	%{name}.tmpfiles
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-awk.patch
+Patch3:		%{name}-cs_quorum.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -28,6 +29,7 @@ BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
 %{?with_heartbeat:BuildRequires: heartbeat-devel >= 2.99}
 BuildRequires:	libesmtp-devel
+BuildRequires:	libqb
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
 BuildRequires:	libxslt-devel
@@ -111,6 +113,7 @@ Static Pacemaker libraries.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__libtoolize}
