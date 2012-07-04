@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# pacemaker	Pacemaker Cluster Manager for the Corosync stack
+#
+# chkconfig: 2345 23 77
+# description: Pacemaker Cluster Manager
+# processname: pacemakerd
+#
+### BEGIN INIT INFO
+# Provides:		pacemaker
+# Required-Start:	$corosync
+# Required-Stop:	$corosync
+# Default-Start:
+# Default-Stop:
+# Short-Description:	Starts and stops Pacemaker Cluster Manager.
+# Description:		Starts and stops Pacemaker Cluster Manager.
+### END INIT INFO
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+[ -f /etc/sysconfig/pacemaker ] && . /etc/sysconfig/pacemaker
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/pacemaker ]; then
+		msg_already_running "Pacemaker Cluster Manager"
+		return
+	fi
+	if grep -q nocluster /proc/cmdline ; then
+		show "Disabled on boot"
+		RETVAL=1
+		return
+	fi
+
+	msg_starting "Pacemaker Cluster Manager"
+	daemon /usr/sbin/pacemakerd --pid-file=/var/run/pacemakerd.pid
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/pacemaker
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/pacemaker ]; then
+		msg_not_running "Pacemaker Cluster Manager"
+		return
+	fi
+
+	# Stop daemons.
+	msg_stopping "Pacemaker Cluster Manager"
+	killproc /usr/sbin/pacemakerd
+	rm -f /var/lock/subsys/pacemaker
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/pacemaker ]; then
+		msg_not_running "Pacemaker Cluster Manager"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+   	sleep 5
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
+  status)
+	status pacemaker pacemakerd
+	RETVAL=$?
+	;;
+*)
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
+	exit 3
+	;;
+esac
+exit $RETVAL

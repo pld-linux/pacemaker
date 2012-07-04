@@ -1,19 +1,18 @@
 #
-# TODO:
-#	- optional support for complete openais stack (corosync is often enough)
-
 %bcond_without	corosync	# build with corosync stack
 %bcond_without	heartbeat	# build without heartbeat stack
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.1.7
-Release:	1
+Release:	1.1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 # https://github.com/ClusterLabs/pacemaker/tarball/Pacemaker-%{version}
 Source0:	ClusterLabs-pacemaker-Pacemaker-%{version}-0-gee0730e.tar.gz
 # Source0-md5:	61076a946cf2ba549dce1458e2ef76e2
 Source1:	%{name}.tmpfiles
+Source2:	%{name}.init
+Source3:	%{name}.service
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-awk.patch
@@ -53,9 +52,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define skip_post_check_so libpe_status.so.*
 
 %description
-Pacemaker makes use of your cluster infrastructure (either OpenAIS or
-Heartbeat) to stop, start and monitor the health of the services (aka.
-resources) you want the cluster to provide.
+Pacemaker makes use of your cluster infrastructure (either 
+Corosync/OpenAIS or Heartbeat) to stop, start and monitor the health
+of the services (aka.  resources) you want the cluster to provide.
 
 It can do this for clusters of practically any size and comes with a
 powerful dependency model that allows the administrator to accurately
@@ -138,7 +137,7 @@ Static Pacemaker libraries.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/usr/lib/tmpfiles.d,/etc/rc.d}
+install -d $RPM_BUILD_ROOT{/usr/lib/tmpfiles.d,/etc/rc.d/init.d,%{systemdunitdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -147,6 +146,8 @@ rm -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
 
 %clean
 rm -rf $RPM_BUILD_ROOT
