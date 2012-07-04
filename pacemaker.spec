@@ -42,6 +42,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	swig
 BuildRequires:	pciutils-devel
 BuildRequires:	cluster-glue-libs-devel
+Requires:	resource-agents
 Requires:	%{name}-libs = %{version}-%{release}
 Provides:	group(haclient)
 Provides:	user(hacluster)
