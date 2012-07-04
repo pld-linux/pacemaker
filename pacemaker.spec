@@ -235,6 +235,7 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
 /usr/lib/tmpfiles.d/%{name}.conf
+%dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 
 %files libs
 %defattr(644,root,root,755)
@@ -251,7 +252,6 @@ fi
 %attr(755,root,root) %{_libdir}/heartbeat/crmd
 %attr(755,root,root) %{_libdir}/heartbeat/pengine
 %attr(755,root,root) %{_libdir}/heartbeat/stonithd
-%dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
 %endif
 
 %if %{with corosync}
