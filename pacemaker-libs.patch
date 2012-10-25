@@ -1,38 +1,51 @@
-diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/Makefile.am
---- ClusterLabs-pacemaker-b5b0a7b.orig/lib/Makefile.am	2012-03-28 08:14:13.000000000 +0200
-+++ ClusterLabs-pacemaker-b5b0a7b/lib/Makefile.am	2012-06-06 08:26:09.000000000 +0200
+diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/Makefile.am
+--- ClusterLabs-pacemaker-1f8858c.orig/lib/Makefile.am	2012-09-20 11:43:41.000000000 +0200
++++ ClusterLabs-pacemaker-1f8858c/lib/Makefile.am	2012-10-25 14:00:13.000000000 +0200
 @@ -39,7 +39,7 @@
  	rm -f *.pc
  
  ## Subdirectories...
--SUBDIRS	= common pengine transition cib fencing cluster plugins
-+SUBDIRS	= common pengine cib transition fencing cluster plugins
+-SUBDIRS	= gnu common pengine transition cib fencing services lrmd cluster
++SUBDIRS	= gnu common pengine cib transition fencing services lrmd cluster
  DIST_SUBDIRS =  $(SUBDIRS) ais
  
  if BUILD_CS_PLUGIN
-diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/pengine/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/pengine/Makefile.am
---- ClusterLabs-pacemaker-b5b0a7b.orig/lib/pengine/Makefile.am	2012-03-28 08:14:13.000000000 +0200
-+++ ClusterLabs-pacemaker-b5b0a7b/lib/pengine/Makefile.am	2012-06-06 08:28:21.000000000 +0200
-@@ -31,10 +31,12 @@
+diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/pengine/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/pengine/Makefile.am
+--- ClusterLabs-pacemaker-1f8858c.orig/lib/pengine/Makefile.am	2012-09-20 11:43:41.000000000 +0200
++++ ClusterLabs-pacemaker-1f8858c/lib/pengine/Makefile.am	2012-10-25 14:00:13.000000000 +0200
+@@ -28,10 +28,12 @@
  
- libpe_rules_la_LDFLAGS	= -version-info 2:0:0
- libpe_rules_la_SOURCES	= $(rule_files) 
+ libpe_rules_la_LDFLAGS	= -version-info 2:1:0
+ libpe_rules_la_SOURCES	= rules.c common.c
 +libpe_rules_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
  
- libpe_status_la_LDFLAGS	= -version-info 3:0:0
- libpe_status_la_SOURCES	=  $(rule_files) $(status_files)
--libpe_status_la_LIBADD	= -llrm @CURSESLIBS@
-+libpe_status_la_LIBADD	= -llrm @CURSESLIBS@ \
-+			  $(top_builddir)/lib/common/libcrmcommon.la
+ libpe_status_la_LDFLAGS	= -version-info 4:0:0
+ libpe_status_la_SOURCES	=  status.c unpack.c utils.c complex.c native.c group.c clone.c rules.c common.c
+-libpe_status_la_LIBADD	=  @CURSESLIBS@
++libpe_status_la_LIBADD	=  @CURSESLIBS@ \
++			   $(top_builddir)/lib/common/libcrmcommon.la
  
  clean-generic:
  	rm -f *.log *.debug *~
-diff -dur ClusterLabs-pacemaker-b5b0a7b.orig/lib/transition/Makefile.am ClusterLabs-pacemaker-b5b0a7b/lib/transition/Makefile.am
---- ClusterLabs-pacemaker-b5b0a7b.orig/lib/transition/Makefile.am	2012-03-28 08:14:13.000000000 +0200
-+++ ClusterLabs-pacemaker-b5b0a7b/lib/transition/Makefile.am	2012-06-06 08:22:40.000000000 +0200
+diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/services/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/services/Makefile.am
+--- ClusterLabs-pacemaker-1f8858c.orig/lib/services/Makefile.am	2012-09-20 11:43:41.000000000 +0200
++++ ClusterLabs-pacemaker-1f8858c/lib/services/Makefile.am	2012-10-25 14:01:45.000000000 +0200
+@@ -26,7 +26,8 @@
+ libcrmservice_la_SOURCES = services.c services_linux.c
+ libcrmservice_la_LDFLAGS = -version-info 1:0:0
+ libcrmservice_la_CFLAGS  = $(GIO_CFLAGS)
+-libcrmservice_la_LIBADD   = $(GIO_LIBS)
++libcrmservice_la_LIBADD   = $(GIO_LIBS) \
++			    $(top_builddir)/lib/common/libcrmcommon.la
+ 
+ if BUILD_UPSTART
+ libcrmservice_la_SOURCES += upstart.c
+diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/transition/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/transition/Makefile.am
+--- ClusterLabs-pacemaker-1f8858c.orig/lib/transition/Makefile.am	2012-09-20 11:43:41.000000000 +0200
++++ ClusterLabs-pacemaker-1f8858c/lib/transition/Makefile.am	2012-10-25 14:00:13.000000000 +0200
 @@ -29,6 +29,7 @@
  
- libtransitioner_la_LDFLAGS	= -version-info 1:0:0
+ libtransitioner_la_LDFLAGS	= -version-info 2:0:0
  libtransitioner_la_CFLAGS	= -I$(top_builddir)
 +libtransitioner_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
  

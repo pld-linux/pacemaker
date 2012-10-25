@@ -1,6 +1,5 @@
 [Unit]
 Description=Pacemaker High Availability Cluster Manager for Corosync stack
-
 After=corosync.target
 Requires=corosync.target
 
@@ -8,12 +7,13 @@ Requires=corosync.target
 WantedBy=multi-user.target
 
 [Service]
-Type=forking
+Type=simple
 PIDFile=/var/run/pacemakerd.pid
 KillMode=process
+NotifyAccess=main
 SysVStartPriority=23
 EnvironmentFile=-/etc/sysconfig/pacemaker
-ExecStart=/usr/sbin/pacemakerd --pid-file=/var/run/pacemakerd.pid
+ExecStart=/usr/sbin/pacemakerd -f --pid-file=/var/run/pacemakerd.pid
 
 # Pacemaker can only exit after all managed services have shut down
 # A HA database could conceivably take even longer than this 

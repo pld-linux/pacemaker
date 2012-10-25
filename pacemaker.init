@@ -34,7 +34,7 @@ start() {
 	fi
 
 	msg_starting "Pacemaker Cluster Manager"
-	daemon /usr/sbin/pacemakerd --pid-file=/var/run/pacemakerd.pid
+	daemon --fork --close-fds /usr/sbin/pacemakerd
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/pacemaker
 }

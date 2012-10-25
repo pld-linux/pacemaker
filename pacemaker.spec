@@ -3,26 +3,23 @@
 %bcond_without	heartbeat	# build without heartbeat stack
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
-Version:	1.1.7
-Release:	1.1
+Version:	1.1.8
+Release:	0.1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
-# https://github.com/ClusterLabs/pacemaker/tarball/Pacemaker-%{version}
-Source0:	ClusterLabs-pacemaker-Pacemaker-%{version}-0-gee0730e.tar.gz
-# Source0-md5:	61076a946cf2ba549dce1458e2ef76e2
+Source0:	https://github.com/ClusterLabs/pacemaker/tarball/Pacemaker-1.1.8/Pacemaker-%{version}.tar.gz
+# Source0-md5:	1bbd5b2282827bc1cf4e19620d606dc7
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
-Patch2:		%{name}-awk.patch
-Patch3:		%{name}-cs_quorum.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bzip2-devel
-%{?with_corosync:BuildRequires:	corosync-devel}
+%{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
@@ -41,10 +38,12 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	swig
 BuildRequires:	pciutils-devel
 BuildRequires:	cluster-glue-libs-devel
+Requires:	cluster-glue
 Requires:	resource-agents
 Requires:	%{name}-libs = %{version}-%{release}
 Provides:	group(haclient)
 Provides:	user(hacluster)
+Suggests:	pacemaker-shell
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # Unresolved symbol in libpe_status.so.3.0.0: get_object_root
@@ -109,17 +108,13 @@ Requires:	%{name}-devel = %{version}-%{release}
 Static Pacemaker libraries.
 
 %prep
-%setup -qn ClusterLabs-pacemaker-b5b0a7b
+%setup -qn ClusterLabs-pacemaker-1f8858c
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%if %{with corosync}
-%patch3 -p1
-%endif
 
 %build
 %{__libtoolize}
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
@@ -143,7 +138,6 @@ install -d $RPM_BUILD_ROOT{/usr/lib/tmpfiles.d,/etc/rc.d/init.d,%{systemdunitdir
 	DESTDIR=$RPM_BUILD_ROOT
 
 rm -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
-rm $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/RAExec/*.{la,a}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
@@ -184,20 +178,19 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/cib
 %attr(755,root,root) %{_libdir}/%{name}/cibmon
 %attr(755,root,root) %{_libdir}/%{name}/crmd
-%attr(755,root,root) %{_libdir}/%{name}/hb2openais.sh
+%attr(755,root,root) %{_libdir}/%{name}/lrmd
+%attr(755,root,root) %{_libdir}/%{name}/lrmd_test
 %attr(755,root,root) %{_libdir}/%{name}/pengine
 %attr(755,root,root) %{_libdir}/%{name}/stonith-test
 %attr(755,root,root) %{_libdir}/%{name}/stonithd
-%{_libdir}/%{name}/*.py*
 %attr(755,root,root) %{_bindir}/ccs2cib
 %attr(755,root,root) %{_bindir}/ccs_flatten
 %attr(755,root,root) %{_bindir}/disable_rgmanager
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
-%attr(755,root,root) %{_sbindir}/cibpipe
-%attr(755,root,root) %{_sbindir}/crm
 %attr(755,root,root) %{_sbindir}/crm_attribute
 %attr(755,root,root) %{_sbindir}/crm_diff
+%attr(755,root,root) %{_sbindir}/crm_error
 %attr(755,root,root) %{_sbindir}/crm_failcount
 %attr(755,root,root) %{_sbindir}/crm_master
 %attr(755,root,root) %{_sbindir}/crm_mon
@@ -214,14 +207,11 @@ fi
 %attr(755,root,root) %{_sbindir}/fence_legacy
 %attr(755,root,root) %{_sbindir}/fence_pcmk
 %attr(755,root,root) %{_sbindir}/iso8601
-%attr(755,root,root) %{_sbindir}/ptest
 %attr(755,root,root) %{_sbindir}/stonith_admin
-%{py_sitedir}/crm
 %{py_sitedir}/cts
 %{_datadir}/snmp/mibs
 %{_mandir}/man8/*.8*
 %{_mandir}/man7/*.7*
-%dir %attr(750,hacluster,haclient) %{_var}/lib/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
 %dir %{_prefix}/lib/ocf/resource.d/pacemaker
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
@@ -236,7 +226,10 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
 /usr/lib/tmpfiles.d/%{name}.conf
-%dir %attr(750,hacluster,haclient) %{_var}/lib/heartbeat/crm
+%dir /var/lib/%{name}
+%dir %attr(750,hacluster,haclient) /var/lib/%{name}/blackbox
+%dir %attr(750,hacluster,haclient) /var/lib/%{name}/cib
+%dir %attr(750,hacluster,haclient) /var/lib/%{name}/pengine
 
 %files libs
 %defattr(644,root,root,755)
@@ -246,8 +239,6 @@ fi
 %if %{with heartbeat}
 %files heartbeat
 %defattr(644,root,root,755)
-%dir %{_libdir}/heartbeat/plugins/RAExec
-%attr(755,root,root) %{_libdir}/heartbeat/plugins/RAExec/*.so
 %attr(755,root,root) %{_libdir}/heartbeat/attrd
 %attr(755,root,root) %{_libdir}/heartbeat/cib
 %attr(755,root,root) %{_libdir}/heartbeat/crmd
@@ -261,7 +252,6 @@ fi
 %attr(755,root,root) %{_sbindir}/pacemakerd
 %attr(755,root,root) /etc/rc.d/init.d/%{name}
 %{systemdunitdir}/%{name}.service
-%{_libdir}/lcrso/pacemaker.lcrso
 %endif
 
 %files devel

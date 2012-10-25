@@ -1,8 +1,0 @@
---- ClusterLabs-pacemaker-b5b0a7b/shell/regression/testcases/ra.filter.orig	2012-06-06 11:11:49.000000000 +0200
-+++ ClusterLabs-pacemaker-b5b0a7b/shell/regression/testcases/ra.filter	2012-06-06 11:11:56.000000000 +0200
-@@ -1,4 +1,4 @@
--#!/usr/bin/awk -f
-+#!/bin/awk -f
- # reduce the providers list to heartbeat and pacemaker
- # (prevents other providers creeping in)
- function reduce(a) {
