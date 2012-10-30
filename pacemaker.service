@@ -11,7 +11,6 @@ Type=simple
 PIDFile=/var/run/pacemakerd.pid
 KillMode=process
 NotifyAccess=main
-SysVStartPriority=23
 EnvironmentFile=-/etc/sysconfig/pacemaker
 ExecStart=/usr/sbin/pacemakerd -f --pid-file=/var/run/pacemakerd.pid
 
