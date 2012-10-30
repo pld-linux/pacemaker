@@ -4,7 +4,7 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.1.8
-Release:	0.1
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/tarball/Pacemaker-1.1.8/Pacemaker-%{version}.tar.gz
