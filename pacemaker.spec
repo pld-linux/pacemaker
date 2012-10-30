@@ -23,7 +23,7 @@ BuildRequires:	bzip2-devel
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
-%{?with_heartbeat:BuildRequires: heartbeat-devel >= 2.99}
+%{?with_heartbeat:BuildRequires: heartbeat-devel >= 3.0.5-6}
 BuildRequires:	libesmtp-devel
 BuildRequires:	libqb
 BuildRequires:	libtool
