@@ -1,6 +1,6 @@
 [Unit]
 Description=Pacemaker High Availability Cluster Manager for Corosync stack
-After=corosync.service
+After=corosync.service dlm.service clvmd.service
 Requires=corosync.service
 
 [Install]
