@@ -1,0 +1,67 @@
+http://oss.clusterlabs.org/pipermail/pacemaker/2012-November/015857.html
+
+
+commit 280926ab8969ecd18c5a8d173c315fc5a637ead5
+Author: Andrew Beekhof <andrew@beekhof.net>
+Date:   Wed Oct 10 18:52:53 2012 +1100
+
+    High: Heartbeat: Remove incorrect assert during cluster connect
+
+diff --git a/lib/cluster/cluster.c b/lib/cluster/cluster.c
+index 4cd1633..ad09700 100644
+--- a/lib/cluster/cluster.c
++++ b/lib/cluster/cluster.c
+@@ -224,7 +224,6 @@ crm_cluster_connect(crm_cluster_t *cluster)
+     if (is_heartbeat_cluster()) {
+         int rv;
+ 
+-        CRM_ASSERT(cluster->hb_conn != NULL);
+         /* coverity[var_deref_op] False positive */
+         if (cluster->hb_conn == NULL) {
+             /* No object passed in, create a new one. */
+
+
+
+commit 728206621d15ee51a8945962f5c07cbf92746c0d
+Author: Philipp Marek <philipp.marek@linbit.com>
+Date:   Tue Oct 16 13:04:49 2012 +0200
+
+    Medium: Fix uninitialized data for --with-heartbeat.
+
+diff --git a/fencing/main.c b/fencing/main.c
+index 407d51f..41b3cb5 100644
+--- a/fencing/main.c
++++ b/fencing/main.c
+@@ -1005,6 +1005,7 @@ main(int argc, char ** argv)
+ 
+     if(stand_alone == FALSE) {
+ #if SUPPORT_HEARTBEAT
++        cluster.hb_conn = NULL;
+         cluster.hb_dispatch = stonith_peer_hb_callback;
+         cluster.destroy = stonith_peer_hb_destroy;
+ #endif
+diff --git a/lib/cluster/cluster.c b/lib/cluster/cluster.c
+index ad09700..4790d3d 100644
+--- a/lib/cluster/cluster.c
++++ b/lib/cluster/cluster.c
+@@ -314,7 +314,7 @@ send_cluster_message(crm_node_t *node, enum crm_ais_msg_types service, xmlNode *
+ #endif
+ #if SUPPORT_HEARTBEAT
+     if (is_heartbeat_cluster()) {
+-        return send_ha_message(heartbeat_cluster, data, node->uname, ordered);
++        return send_ha_message(heartbeat_cluster, data, node ? node->uname : NULL, ordered);
+     }
+ #endif
+     return FALSE;
+diff --git a/tools/attrd.c b/tools/attrd.c
+index f6eec8d..7f05d38 100644
+--- a/tools/attrd.c
++++ b/tools/attrd.c
+@@ -575,6 +575,7 @@ main(int argc, char **argv)
+ 
+ #if SUPPORT_HEARTBEAT
+         if (is_heartbeat_cluster()) {
++            cluster.hb_conn = NULL;
+             cluster.hb_dispatch = attrd_ha_callback;
+             cluster.destroy = attrd_ha_connection_destroy;
+         }

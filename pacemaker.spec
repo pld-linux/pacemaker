@@ -14,6 +14,7 @@ Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-libs.patch
+Patch2:		%{name}-stonithd_crash.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -111,6 +112,7 @@ Static Pacemaker libraries.
 %setup -qn ClusterLabs-pacemaker-1f8858c
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}
