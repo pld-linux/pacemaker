@@ -13,6 +13,7 @@ KillMode=process
 NotifyAccess=main
 EnvironmentFile=-/etc/sysconfig/pacemaker
 ExecStart=/usr/sbin/pacemakerd -f --pid-file=/var/run/pacemakerd.pid
+ExecStop=/usr/sbin/pacemakerd --shutdown
 
 # Pacemaker can only exit after all managed services have shut down
 # A HA database could conceivably take even longer than this 
