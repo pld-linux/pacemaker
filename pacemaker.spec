@@ -34,6 +34,7 @@ BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
+BuildRequires:  rpmbuild(macros) >= 1.644
 BuildRequires:	swig
 BuildRequires:	pciutils-devel
 BuildRequires:	cluster-glue-libs-devel
@@ -83,6 +84,7 @@ This package allows using Pacemaker on a Heartbeat cluster.
 Summary:	Pacemaker for Corosync cluster
 Group:		Applications/System
 Requires:	corosync
+Requires:       systemd-units >= 38
 Requires:	%{name} = %{version}-%{release}
 
 %description corosync
@@ -152,7 +154,6 @@ rm -rf $RPM_BUILD_ROOT
 %post corosync
 /sbin/chkconfig --add %{name}
 %service %{name} restart "%{name} daemon"
-
 %systemd_post %{name}.service
 
 %preun
@@ -160,6 +161,8 @@ if [ "$1" = "0" ]; then
         %service %{name} stop
         /sbin/chkconfig --del %{name}
 fi
+
+%preun corosync
 %systemd_preun %{name}.service
 
 %postun corosync
