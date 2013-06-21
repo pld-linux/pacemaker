@@ -90,6 +90,17 @@ Requires:	%{name} = %{version}-%{release}
 %description corosync
 This package allows using Pacemaker on a Corosync cluster.
 
+%package remote
+Summary:	Remote services manager for Pacemaker
+Group:		Applications/System
+Requires:       systemd-units >= 38
+Requires:	%{name} = %{version}-%{release}
+
+%description remote
+This package allows running Pacemaker-managed services on 'virtual'
+nodes without actual cluster stack. This is usefull to manage services
+in virtual machines or containers runnin on a Pacemaker cluster.
+
 %package devel
 Summary:	Header files for Pacemaker libraries
 Summary(pl.UTF-8):	Pliki nagłówkowe bibliotek Pacemaker
@@ -168,6 +179,17 @@ fi
 %postun corosync
 %systemd_reload
 
+%post remote
+/sbin/chkconfig --add pacemaker_remote
+%service pacemaker_remote restart "pacemaker_remote daemon"
+%systemd_post pacemaker_remote.service
+
+%preun remote
+%systemd_preun %{name}.service
+
+%postun remote
+%systemd_reload
+
 %post   libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
@@ -212,7 +234,28 @@ fi
 %attr(755,root,root) %{_sbindir}/stonith_admin
 %{py_sitedir}/cts
 %{_datadir}/snmp/mibs
-%{_mandir}/man8/*.8*
+%{_mandir}/man8/attrd_updater.8.gz
+%{_mandir}/man8/cibadmin.8.gz
+%{_mandir}/man8/crm_attribute.8.gz
+%{_mandir}/man8/crm_diff.8.gz
+%{_mandir}/man8/crm_error.8.gz
+%{_mandir}/man8/crm_failcount.8.gz
+%{_mandir}/man8/crm_master.8.gz
+%{_mandir}/man8/crm_mon.8.gz
+%{_mandir}/man8/crm_node.8.gz
+%{_mandir}/man8/crm_report.8.gz
+%{_mandir}/man8/crm_resource.8.gz
+%{_mandir}/man8/crm_shadow.8.gz
+%{_mandir}/man8/crm_simulate.8.gz
+%{_mandir}/man8/crm_standby.8.gz
+%{_mandir}/man8/crm_ticket.8.gz
+%{_mandir}/man8/crm_uuid.8.gz
+%{_mandir}/man8/crm_verify.8.gz
+%{_mandir}/man8/crmadmin.8.gz
+%{_mandir}/man8/fence_legacy.8.gz
+%{_mandir}/man8/fence_pcmk.8.gz
+%{_mandir}/man8/iso8601.8.gz
+%{_mandir}/man8/stonith_admin.8.gz
 %{_mandir}/man7/*.7*
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
 %dir %{_prefix}/lib/ocf/resource.d/pacemaker
@@ -227,6 +270,7 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/remote
 /usr/lib/tmpfiles.d/%{name}.conf
 %dir /var/lib/%{name}
 %dir %attr(750,hacluster,haclient) /var/lib/%{name}/blackbox
@@ -237,6 +281,13 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %attr(755,root,root) %{_libdir}/lib*.so.[0-9]
+
+%files remote
+%defattr(644,root,root,755)
+%{_mandir}/man8/pacemaker_remoted.8.gz
+%attr(755,root,root) %{_sbindir}/pacemaker_remoted
+%attr(755,root,root) /etc/rc.d/init.d/pacemaker_remote
+%{systemdunitdir}/pacemaker_remote.service
 
 %if %{with heartbeat}
 %files heartbeat
@@ -251,6 +302,7 @@ fi
 %if %{with corosync}
 %files corosync
 %defattr(644,root,root,755)
+%{_mandir}/man8/pacemakerd.8.gz
 %attr(755,root,root) %{_sbindir}/pacemakerd
 %attr(755,root,root) /etc/rc.d/init.d/%{name}
 %{systemdunitdir}/%{name}.service
