@@ -1,0 +1,12 @@
+diff -dur pacemaker-Pacemaker-1.1.9.orig/configure.ac pacemaker-Pacemaker-1.1.9/configure.ac
+--- pacemaker-Pacemaker-1.1.9.orig/configure.ac	2013-03-08 11:48:01.000000000 +0100
++++ pacemaker-Pacemaker-1.1.9/configure.ac	2013-06-21 20:48:16.759547334 +0200
+@@ -42,7 +42,7 @@
+ dnl     new defines
+ dnl   - Should not include HAVE_* defines
+ dnl   - Safe to include anywhere
+-AM_CONFIG_HEADER(include/config.h include/crm_config.h)
++AC_CONFIG_HEADERS(include/config.h include/crm_config.h)
+ ALL_LINGUAS="en fr"
+ 
+ AC_ARG_WITH(version,

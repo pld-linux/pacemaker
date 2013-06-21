@@ -13,6 +13,7 @@ Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-libs.patch
+Patch1:		%{name}-automake.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -122,6 +123,7 @@ Static Pacemaker libraries.
 %prep
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
