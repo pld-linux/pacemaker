@@ -1,6 +1,6 @@
-diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/Makefile.am
---- ClusterLabs-pacemaker-1f8858c.orig/lib/Makefile.am	2012-09-20 11:43:41.000000000 +0200
-+++ ClusterLabs-pacemaker-1f8858c/lib/Makefile.am	2012-10-25 14:00:13.000000000 +0200
+diff -dur -x '*~' pacemaker-Pacemaker-1.1.9.orig/lib/Makefile.am pacemaker-Pacemaker-1.1.9/lib/Makefile.am
+--- pacemaker-Pacemaker-1.1.9.orig/lib/Makefile.am	2013-03-08 11:48:01.000000000 +0100
++++ pacemaker-Pacemaker-1.1.9/lib/Makefile.am	2013-06-21 13:53:10.000000000 +0200
 @@ -39,7 +39,7 @@
  	rm -f *.pc
  
@@ -10,16 +10,16 @@ diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/Makefile.am ClusterLabs-pacemak
  DIST_SUBDIRS =  $(SUBDIRS) ais
  
  if BUILD_CS_PLUGIN
-diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/pengine/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/pengine/Makefile.am
---- ClusterLabs-pacemaker-1f8858c.orig/lib/pengine/Makefile.am	2012-09-20 11:43:41.000000000 +0200
-+++ ClusterLabs-pacemaker-1f8858c/lib/pengine/Makefile.am	2012-10-25 14:00:13.000000000 +0200
+diff -dur -x '*~' pacemaker-Pacemaker-1.1.9.orig/lib/pengine/Makefile.am pacemaker-Pacemaker-1.1.9/lib/pengine/Makefile.am
+--- pacemaker-Pacemaker-1.1.9.orig/lib/pengine/Makefile.am	2013-03-08 11:48:01.000000000 +0100
++++ pacemaker-Pacemaker-1.1.9/lib/pengine/Makefile.am	2013-06-21 13:54:07.000000000 +0200
 @@ -28,10 +28,12 @@
  
- libpe_rules_la_LDFLAGS	= -version-info 2:1:0
+ libpe_rules_la_LDFLAGS	= -version-info 2:2:0
  libpe_rules_la_SOURCES	= rules.c common.c
-+libpe_rules_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
++libpe_rules_la_LIBADD  = $(top_builddir)/lib/common/libcrmcommon.la
  
- libpe_status_la_LDFLAGS	= -version-info 4:0:0
+ libpe_status_la_LDFLAGS	= -version-info 5:0:1
  libpe_status_la_SOURCES	=  status.c unpack.c utils.c complex.c native.c group.c clone.c rules.c common.c
 -libpe_status_la_LIBADD	=  @CURSESLIBS@
 +libpe_status_la_LIBADD	=  @CURSESLIBS@ \
@@ -27,9 +27,11 @@ diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/pengine/Makefile.am ClusterLabs
  
  clean-generic:
  	rm -f *.log *.debug *~
-diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/services/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/services/Makefile.am
---- ClusterLabs-pacemaker-1f8858c.orig/lib/services/Makefile.am	2012-09-20 11:43:41.000000000 +0200
-+++ ClusterLabs-pacemaker-1f8858c/lib/services/Makefile.am	2012-10-25 14:01:45.000000000 +0200
+Only in pacemaker-Pacemaker-1.1.9/lib/pengine: Makefile.am.orig
+Only in pacemaker-Pacemaker-1.1.9/lib/pengine: Makefile.am.rej
+diff -dur -x '*~' pacemaker-Pacemaker-1.1.9.orig/lib/services/Makefile.am pacemaker-Pacemaker-1.1.9/lib/services/Makefile.am
+--- pacemaker-Pacemaker-1.1.9.orig/lib/services/Makefile.am	2013-03-08 11:48:01.000000000 +0100
++++ pacemaker-Pacemaker-1.1.9/lib/services/Makefile.am	2013-06-21 13:53:10.000000000 +0200
 @@ -26,7 +26,8 @@
  libcrmservice_la_SOURCES = services.c services_linux.c
  libcrmservice_la_LDFLAGS = -version-info 1:0:0
@@ -40,9 +42,9 @@ diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/services/Makefile.am ClusterLab
  
  if BUILD_UPSTART
  libcrmservice_la_SOURCES += upstart.c
-diff -dur ClusterLabs-pacemaker-1f8858c.orig/lib/transition/Makefile.am ClusterLabs-pacemaker-1f8858c/lib/transition/Makefile.am
---- ClusterLabs-pacemaker-1f8858c.orig/lib/transition/Makefile.am	2012-09-20 11:43:41.000000000 +0200
-+++ ClusterLabs-pacemaker-1f8858c/lib/transition/Makefile.am	2012-10-25 14:00:13.000000000 +0200
+diff -dur -x '*~' pacemaker-Pacemaker-1.1.9.orig/lib/transition/Makefile.am pacemaker-Pacemaker-1.1.9/lib/transition/Makefile.am
+--- pacemaker-Pacemaker-1.1.9.orig/lib/transition/Makefile.am	2013-03-08 11:48:01.000000000 +0100
++++ pacemaker-Pacemaker-1.1.9/lib/transition/Makefile.am	2013-06-21 13:53:10.000000000 +0200
 @@ -29,6 +29,7 @@
  
  libtransitioner_la_LDFLAGS	= -version-info 2:0:0
