@@ -14,6 +14,7 @@ Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-libs.patch
 Patch1:		%{name}-automake.patch
+Patch2:		%{name}-manpage_xslt.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -126,6 +127,7 @@ Static Pacemaker libraries.
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}

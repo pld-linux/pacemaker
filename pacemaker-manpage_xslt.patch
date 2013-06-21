@@ -1,0 +1,24 @@
+diff -dur pacemaker-Pacemaker-1.1.9.orig/configure.ac pacemaker-Pacemaker-1.1.9/configure.ac
+--- pacemaker-Pacemaker-1.1.9.orig/configure.ac	2013-06-21 21:29:19.000000000 +0200
++++ pacemaker-Pacemaker-1.1.9/configure.ac	2013-06-21 21:30:52.227965879 +0200
+@@ -547,19 +547,7 @@
+    PCMK_FEATURES="$PCMK_FEATURES generated-manpages"
+ fi
+ 
+-MANPAGE_XSLT=""
+-if test x"${XSLTPROC}" != x""; then
+-  AC_MSG_CHECKING(docbook to manpage transform)
+-  XSLT=`find ${datadir} -name docbook.xsl`
+-  for xsl in $XSLT; do
+-    dname=`dirname $xsl`
+-    bname=`basename $dname`
+-    if test "$bname" = "manpages"; then
+-       MANPAGE_XSLT="$xsl"
+-       break
+-    fi
+-  done
+-fi
++MANPAGE_XSLT="/usr/share/sgml/docbook/xsl-stylesheets/manpages/docbook.xsl"
+ AC_MSG_RESULT($MANPAGE_XSLT)
+ AC_SUBST(MANPAGE_XSLT)
+ 
