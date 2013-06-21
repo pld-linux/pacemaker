@@ -20,6 +20,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bzip2-devel
 %{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
+BuildRequires:	docbook-style-xsl
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
@@ -29,6 +30,7 @@ BuildRequires:	libqb
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
 BuildRequires:	libxslt-devel
+BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	pam-devel
