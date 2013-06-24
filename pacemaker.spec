@@ -89,6 +89,7 @@ Summary:	Pacemaker for Corosync cluster
 Group:		Applications/System
 Requires:	corosync
 Requires:       systemd-units >= 38
+%requires_eq	heartbeat-libs
 Requires:	%{name} = %{version}-%{release}
 
 %description corosync
