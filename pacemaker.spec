@@ -232,7 +232,6 @@ fi
 %attr(755,root,root) %{_sbindir}/crm_shadow
 %attr(755,root,root) %{_sbindir}/crm_standby
 %attr(755,root,root) %{_sbindir}/crm_ticket
-%attr(755,root,root) %{_sbindir}/crm_uuid
 %attr(755,root,root) %{_sbindir}/crm_verify
 %attr(755,root,root) %{_sbindir}/crmadmin
 %attr(755,root,root) %{_sbindir}/fence_legacy
@@ -256,7 +255,6 @@ fi
 %{_mandir}/man8/crm_simulate.8.gz
 %{_mandir}/man8/crm_standby.8.gz
 %{_mandir}/man8/crm_ticket.8.gz
-%{_mandir}/man8/crm_uuid.8.gz
 %{_mandir}/man8/crm_verify.8.gz
 %{_mandir}/man8/crmadmin.8.gz
 %{_mandir}/man8/fence_legacy.8.gz
@@ -299,11 +297,13 @@ fi
 %if %{with heartbeat}
 %files heartbeat
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/crm_uuid
 %attr(755,root,root) %{_libdir}/heartbeat/attrd
 %attr(755,root,root) %{_libdir}/heartbeat/cib
 %attr(755,root,root) %{_libdir}/heartbeat/crmd
 %attr(755,root,root) %{_libdir}/heartbeat/pengine
 %attr(755,root,root) %{_libdir}/heartbeat/stonithd
+%{_mandir}/man8/crm_uuid.8.gz
 %endif
 
 %if %{with corosync}
