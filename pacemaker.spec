@@ -3,18 +3,18 @@
 %bcond_without	heartbeat	# build without heartbeat stack
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
-Version:	1.1.9
-Release:	1
+Version:	1.1.10
+%define	_rc	5
+Release:	0.rc%{_rc}
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
-Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	24f3a2bdbac63e640062c207eb838016
+Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}-rc%{_rc}.tar.gz
+# Source0-md5:	77bbeda7fcf5f2431cef920f0d6b7fe8
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
-Patch0:		%{name}-libs.patch
-Patch1:		%{name}-automake.patch
-Patch2:		%{name}-manpage_xslt.patch
+Patch0:		%{name}-automake.patch
+Patch1:		%{name}-manpage_xslt.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 BuildRequires:	asciidoc
 BuildRequires:	autoconf
@@ -125,10 +125,9 @@ Requires:	%{name}-devel = %{version}-%{release}
 Static Pacemaker libraries.
 
 %prep
-%setup -qn pacemaker-Pacemaker-%{version}
+%setup -qn pacemaker-Pacemaker-%{version}-rc%{_rc}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %{__libtoolize}
