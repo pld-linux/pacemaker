@@ -5,7 +5,7 @@ Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.1.10
 %define	_rc	5
-Release:	0.rc%{_rc}.1
+Release:	0.rc%{_rc}.2
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}-rc%{_rc}.tar.gz
