@@ -4,12 +4,11 @@
 Summary:	The scalable High-Availability cluster resource manager
 Name:		pacemaker
 Version:	1.1.10
-%define	_rc	5
-Release:	0.rc%{_rc}.2
+Release:	1
 License:	GPL v2+; LGPL v2.1+
 Group:		Applications/System
-Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}-rc%{_rc}.tar.gz
-# Source0-md5:	77bbeda7fcf5f2431cef920f0d6b7fe8
+Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
+# Source0-md5:	532ec5d62b9437204a9f18fa3d5a89fc
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -125,7 +124,7 @@ Requires:	%{name}-devel = %{version}-%{release}
 Static Pacemaker libraries.
 
 %prep
-%setup -qn pacemaker-Pacemaker-%{version}-rc%{_rc}
+%setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
 %patch1 -p1
 
@@ -213,9 +212,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/pengine
 %attr(755,root,root) %{_libdir}/%{name}/stonith-test
 %attr(755,root,root) %{_libdir}/%{name}/stonithd
-%attr(755,root,root) %{_bindir}/ccs2cib
-%attr(755,root,root) %{_bindir}/ccs_flatten
-%attr(755,root,root) %{_bindir}/disable_rgmanager
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
