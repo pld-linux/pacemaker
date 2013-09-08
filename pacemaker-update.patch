@@ -1,0 +1,74 @@
+--- pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c.orig	2013-07-26 02:02:31.000000000 +0200
++++ pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c	2013-09-07 22:08:44.162036132 +0200
+@@ -31,13 +31,13 @@
+ #include <crm/common/util.h>
+ #include <crm_internal.h>
+ 
+-typedef enum { STATUS_GREEN = 1, STATUS_YELLOW, STATUS_RED } STATUS;
++typedef enum { STATUS_GREEN = 1, STATUS_YELLOW, STATUS_RED } STATUS_T;
+ 
+-const char *status2char(STATUS status);
+-STATUS event2status(struct sl_event *event);
++const char *status2char(STATUS_T status);
++STATUS_T event2status(struct sl_event *event);
+ 
+ const char *
+-status2char(STATUS status)
++status2char(STATUS_T status)
+ {
+     switch (status) {
+         default:
+@@ -50,10 +50,10 @@
+     }
+ }
+ 
+-STATUS
++STATUS_T
+ event2status(struct sl_event * event)
+ {
+-    STATUS status = STATUS_GREEN;
++    STATUS_T status = STATUS_GREEN;
+ 
+     crm_debug("Severity = %d, Disposition = %d", event->severity, event->disposition);
+ 
+@@ -91,7 +91,7 @@
+     struct sl_event *event = NULL;
+     uint64_t event_id = 0;
+ 
+-    crm_log_init_quiet("notifyServicelogEvent", LOG_INFO, FALSE, TRUE, argc, argv);
++    crm_log_init("notifyServicelogEvent", LOG_INFO, FALSE, TRUE, argc, argv, TRUE);
+     crm_set_options(NULL, "event_id ", long_options,
+                     "Gets called upon events written to servicelog database");
+ 
+@@ -153,7 +153,7 @@
+     }
+ 
+     if (rc == 0) {
+-        STATUS status = STATUS_GREEN;
++        STATUS_T status = STATUS_GREEN;
+         const char *health_component = "#health-ipmi";
+         const char *health_status = NULL;
+ 
+@@ -167,9 +167,9 @@
+         if (health_status) {
+             gboolean rc;
+ 
+-            rc = attrd_update_no_mainloop(NULL,
++            rc = (attrd_update_delegate(NULL,
+                                           'v',
+-                                          NULL, health_component, health_status, NULL, NULL, NULL);
++                                          NULL, health_component, health_status, NULL, NULL, NULL, NULL) > 0);
+ 
+             crm_debug("attrd_update_no_mainloop ('%s', '%s') = %d",
+                       health_component, health_status, rc);
+--- pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c.orig	2013-07-26 02:02:31.000000000 +0200
++++ pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c	2013-09-07 22:09:35.002033998 +0200
+@@ -565,7 +565,7 @@
+ 
+     crm_make_daemon("ipmiservicelogd", TRUE, "/var/run/ipmiservicelogd.pid0");
+ 
+-    crm_log_init("ipmiservicelogd", LOG_INFO, FALSE, TRUE, argc, argv);
++    crm_log_init("ipmiservicelogd", LOG_INFO, FALSE, TRUE, argc, argv, FALSE);
+ 
+ #ifdef COMPLEX
+     rv = ipmi_args_setup_con(args, os_hnd, NULL, &con);

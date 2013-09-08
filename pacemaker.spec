@@ -2,7 +2,15 @@
 # Conditional build:
 %bcond_without	corosync	# Corosync stack support
 %bcond_without	heartbeat	# Heartbeat stack support
+%bcond_without	servicelog	# ServiceLog support [IBM PPC specific]
+%bcond_without	ipmi		# IPMI ServiceLog support [IBM PPC specific]
 #
+%ifnarch ppc ppc64
+%undefine	with_servicelog
+%endif
+%if %{without servicelog}
+%undefine	with_ipmi
+%endif
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
@@ -17,22 +25,31 @@ Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-automake.patch
 Patch1:		%{name}-manpage_xslt.patch
+Patch2:		%{name}-corosync.patch
+Patch3:		%{name}-update.patch
+Patch4:		%{name}-man.patch
+Patch5:		%{name}-libs.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
+%{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 BuildRequires:	bzip2-devel
 BuildRequires:	cluster-glue-libs-devel
 %{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
 BuildRequires:	docbook-style-xsl
 BuildRequires:	e2fsprogs-devel
-BuildRequires:	glib2-devel
+BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gnutls-devel
+BuildRequires:	help2man
 %{?with_heartbeat:BuildRequires:	heartbeat-devel >= 3.0.5-6}
 BuildRequires:	libesmtp-devel
-BuildRequires:	libqb
+BuildRequires:	libltdl-devel
+BuildRequires:	libqb-devel >= 0.13
+%{?with_servicelog:BuildRequires:	libservicelog-devel}
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel
+BuildRequires:	libuuid-devel
+BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel
@@ -51,10 +68,6 @@ Provides:	group(haclient)
 Provides:	user(hacluster)
 Suggests:	pacemaker-shell
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-# Unresolved symbol in libpe_status.so.3.0.0: get_object_root
-# not handled by -libs patch, as it is a circular dependency
-%define		skip_post_check_so libpe_status.so.*
 
 %description
 Pacemaker makes use of your cluster infrastructure (either 
@@ -167,6 +180,10 @@ lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 %{__libtoolize}
@@ -175,30 +192,32 @@ lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
 %{__autoheader}
 %{__automake}
 
+CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}"
 %configure \
-	CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}" \
 	--with-acl \
 	--with-corosync%{!?with_corosync:=no} \
 	--with-esmtp \
 	--with-heartbeat%{!?with_heartbeat:=no} \
 	--with-initdir=/etc/rc.d/init.d \
 	--with-snmp \
-	--disable-fatal-warnings
+	--disable-fatal-warnings \
+	--disable-silent-rules
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/usr/lib/tmpfiles.d,/etc/rc.d/init.d,%{systemdunitdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 
-install %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
+install -D %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
+%if %{with corosync}
+install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install -D %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -262,6 +281,12 @@ fi
 %attr(755,root,root) %{_sbindir}/fence_pcmk
 %attr(755,root,root) %{_sbindir}/iso8601
 %attr(755,root,root) %{_sbindir}/stonith_admin
+%if %{with servicelog}
+%if %{with ipmi}
+%attr(755,root,root) %{_sbindir}/ipmiservicelogd
+%endif
+%attr(755,root,root) %{_sbindir}/notifyServicelogEvent
+%endif
 %dir %{_libdir}/%{name}
 %attr(755,root,root) %{_libdir}/%{name}/attrd
 %attr(755,root,root) %{_libdir}/%{name}/cib
@@ -273,8 +298,12 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/stonith-test
 %attr(755,root,root) %{_libdir}/%{name}/stonithd
 %{_datadir}/pacemaker
-%{_datadir}/snmp/mibs/*
+%{_datadir}/snmp/mibs/PCMK-MIB.txt
 %{py_sitedir}/cts
+%{_mandir}/man7/crmd.7*
+%{_mandir}/man7/ocf_pacemaker_*.7*
+%{_mandir}/man7/pengine.7*
+%{_mandir}/man7/stonithd.7*
 %{_mandir}/man8/attrd_updater.8*
 %{_mandir}/man8/cibadmin.8*
 %{_mandir}/man8/crm_attribute.8*
@@ -296,7 +325,9 @@ fi
 %{_mandir}/man8/fence_pcmk.8*
 %{_mandir}/man8/iso8601.8*
 %{_mandir}/man8/stonith_admin.8*
-%{_mandir}/man7/*.7*
+%if %{with servicelog}
+%{_mandir}/man8/notifyServicelogEvent.8*
+%endif
 
 %dir %{_prefix}/lib/ocf/resource.d/pacemaker
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
@@ -321,19 +352,70 @@ fi
 
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
-%attr(755,root,root) %{_libdir}/lib*.so.[0-9]
+%attr(755,root,root) %{_libdir}/libcib.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcib.so.3
+%attr(755,root,root) %{_libdir}/libcrmcluster.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcrmcluster.so.4
+%attr(755,root,root) %{_libdir}/libcrmcommon.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcrmcommon.so.3
+%attr(755,root,root) %{_libdir}/libcrmservice.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcrmservice.so.1
+%attr(755,root,root) %{_libdir}/liblrmd.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/liblrmd.so.1
+%attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.2
+%attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.4
+%attr(755,root,root) %{_libdir}/libpengine.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpengine.so.4
+%attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libstonithd.so.2
+%attr(755,root,root) %{_libdir}/libtransitioner.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libtransitioner.so.2
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/*.so
-%{_libdir}/*.la
+%attr(755,root,root) %{_libdir}/libcib.so
+%attr(755,root,root) %{_libdir}/libcrmcluster.so
+%attr(755,root,root) %{_libdir}/libcrmcommon.so
+%attr(755,root,root) %{_libdir}/libcrmservice.so
+%attr(755,root,root) %{_libdir}/liblrmd.so
+%attr(755,root,root) %{_libdir}/libpe_rules.so
+%attr(755,root,root) %{_libdir}/libpe_status.so
+%attr(755,root,root) %{_libdir}/libpengine.so
+%attr(755,root,root) %{_libdir}/libstonithd.so
+%attr(755,root,root) %{_libdir}/libtransitioner.so
+%{_libdir}/libcib.la
+%{_libdir}/libcrmcluster.la
+%{_libdir}/libcrmcommon.la
+%{_libdir}/libcrmservice.la
+%{_libdir}/liblrmd.la
+%{_libdir}/libpe_rules.la
+%{_libdir}/libpe_status.la
+%{_libdir}/libpengine.la
+%{_libdir}/libstonithd.la
+%{_libdir}/libtransitioner.la
 %{_includedir}/pacemaker
-%{_pkgconfigdir}/*.pc
+%{_pkgconfigdir}/pacemaker.pc
+%{_pkgconfigdir}/pacemaker-cib.pc
+%{_pkgconfigdir}/pacemaker-cluster.pc
+%{_pkgconfigdir}/pacemaker-fencing.pc
+%{_pkgconfigdir}/pacemaker-lrmd.pc
+%{_pkgconfigdir}/pacemaker-pengine.pc
+%{_pkgconfigdir}/pacemaker-service.pc
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/*.a
+%{_libdir}/libcib.a
+%{_libdir}/libcrmcluster.a
+%{_libdir}/libcrmcommon.a
+%{_libdir}/libcrmservice.a
+%{_libdir}/liblrmd.a
+%{_libdir}/libpe_rules.a
+%{_libdir}/libpe_status.a
+%{_libdir}/libpengine.a
+%{_libdir}/libstonithd.a
+%{_libdir}/libtransitioner.a
 
 %files remote
 %defattr(644,root,root,755)

@@ -1,0 +1,11 @@
+--- pacemaker-Pacemaker-1.1.10/tools/Makefile.am.orig	2013-07-26 02:02:31.000000000 +0200
++++ pacemaker-Pacemaker-1.1.10/tools/Makefile.am	2013-09-08 08:12:08.253850125 +0200
+@@ -58,7 +58,7 @@
+ endif
+ 
+ if BUILD_HELP
+-man8_MANS =		$(sbin_PROGRAMS:%=%.8) $(sbin_SCRIPTS:%=%.8)
++man8_MANS =		$(filter-out ipmiservicelogd.8, $(sbin_PROGRAMS:%=%.8) $(sbin_SCRIPTS:%=%.8))
+ endif
+ 
+ ## SOURCES
