@@ -14,31 +14,34 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.10
+Version:	1.1.11
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	532ec5d62b9437204a9f18fa3d5a89fc
+# Source0-md5:	7cbe4f8ef2b300c3426a0c12a0c67c93
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-automake.patch
 Patch1:		%{name}-manpage_xslt.patch
-Patch2:		%{name}-corosync.patch
-Patch3:		%{name}-update.patch
-Patch4:		%{name}-man.patch
-Patch5:		%{name}-libs.patch
+Patch2:		%{name}-update.patch
+Patch3:		%{name}-man.patch
+Patch4:		%{name}-libs.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 %{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
+BuildRequires:	bison
 BuildRequires:	bzip2-devel
 BuildRequires:	cluster-glue-libs-devel
 %{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
+BuildRequires:	dbus-devel
 BuildRequires:	docbook-style-xsl
 BuildRequires:	e2fsprogs-devel
+BuildRequires:	flex
+BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gnutls-devel
 BuildRequires:	help2man
@@ -52,14 +55,15 @@ BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
-BuildRequires:	ncurses-devel
+BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	net-snmp-devel
 BuildRequires:	pam-devel
 BuildRequires:	pciutils-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
-BuildRequires:  rpmbuild(macros) >= 1.644
+BuildRequires:	rpmbuild(macros) >= 1.644
+BuildRequires:	systemd-units
 BuildRequires:	swig
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	cluster-glue
@@ -149,7 +153,7 @@ Summary(pl.UTF-8):	Pacemaker dla klastra Corosync
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	corosync
-Requires:       systemd-units >= 38
+Requires:	systemd-units >= 38
 %{?with_heartbeat:%requires_eq	heartbeat-libs}
 
 %description corosync
@@ -162,7 +166,7 @@ Ten pakiet pozwala na używanie Pacemakera na klastrze Corosync.
 Summary:	Remote services manager for Pacemaker
 Summary(pl.UTF-8):	Zarządca usług zdalnych dla Pacemakera
 Group:		Applications/System
-Requires:       systemd-units >= 38
+Requires:	systemd-units >= 38
 Requires:	%{name} = %{version}-%{release}
 
 %description remote
@@ -183,7 +187,6 @@ lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
 %{__libtoolize}
@@ -233,8 +236,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %preun
 if [ "$1" = "0" ]; then
-        %service %{name} stop
-        /sbin/chkconfig --del %{name}
+	%service %{name} stop
+	/sbin/chkconfig --del %{name}
 fi
 
 %preun corosync
@@ -254,8 +257,8 @@ fi
 %postun remote
 %systemd_reload
 
-%post   libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
