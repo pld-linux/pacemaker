@@ -15,7 +15,7 @@ Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
 Version:	1.1.11
-Release:	1
+Release:	2
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
@@ -212,6 +212,7 @@ CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}"
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
+	mibdir=%{_datadir}/mibs \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
@@ -301,7 +302,7 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/stonith-test
 %attr(755,root,root) %{_libdir}/%{name}/stonithd
 %{_datadir}/pacemaker
-%{_datadir}/snmp/mibs/PCMK-MIB.txt
+%{_datadir}/mibs/PCMK-MIB.txt
 %{py_sitedir}/cts
 %{_mandir}/man7/crmd.7*
 %{_mandir}/man7/ocf_pacemaker_*.7*
