@@ -41,7 +41,7 @@ BuildRequires:	dbus-devel
 BuildRequires:	docbook-style-xsl
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	flex
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gnutls-devel
 BuildRequires:	help2man
