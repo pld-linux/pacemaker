@@ -15,7 +15,7 @@ Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
 Version:	1.1.11
-Release:	3
+Release:	4
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
