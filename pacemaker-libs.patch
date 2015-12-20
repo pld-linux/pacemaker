@@ -120,12 +120,12 @@
  # libcib for get_object_root()
  #		$(top_builddir)/lib/hbclient/libhbclient.la
  
---- pacemaker-Pacemaker-1.1.11/lib/common/Makefile.am.orig	2014-02-14 19:44:12.731276928 +0100
-+++ pacemaker-Pacemaker-1.1.11/lib/common/Makefile.am	2014-02-14 19:53:20.877920591 +0100
+--- pacemaker-Pacemaker-1.1.13/lib/common/Makefile.am.orig	2014-02-14 19:44:12.731276928 +0100
++++ pacemaker-Pacemaker-1.1.13/lib/common/Makefile.am	2014-02-14 19:53:20.877920591 +0100
 @@ -38,7 +38,7 @@
  endif
  
- libcrmcommon_la_LDFLAGS	= -version-info 5:0:2
+ libcrmcommon_la_LDFLAGS	= -version-info 7:0:4
 -libcrmcommon_la_LIBADD  = @LIBADD_DL@ $(GNUTLSLIBS)
 +libcrmcommon_la_LIBADD  = @LIBADD_DL@ $(LIBPLUMB) $(GNUTLSLIBS) $(LIBXML2) $(LIBXSLT) $(LIBQB) $(LIBBZ2) $(LIBUUID)
  libcrmcommon_la_SOURCES += $(top_builddir)/lib/gnu/md5.c
@@ -136,7 +136,7 @@
 @@ -33,7 +33,7 @@
  endif
  
- libcib_la_LDFLAGS	= -version-info 3:1:0 -L$(top_builddir)/lib/pengine/.libs
+ libcib_la_LDFLAGS	= -version-info 4:1:0 -L$(top_builddir)/lib/pengine/.libs
 -libcib_la_LIBADD        = $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la
 +libcib_la_LIBADD        = $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la $(GNUTLSLIBS)
  libcib_la_CFLAGS	= -I$(top_srcdir)
@@ -146,7 +146,7 @@
 +++ pacemaker-Pacemaker-1.1.10/lib/pengine/Makefile.am	2013-09-08 15:20:26.939438320 +0200
 @@ -32,7 +32,7 @@
  
- libpe_status_la_LDFLAGS	= -version-info 6:0:2
+ libpe_status_la_LDFLAGS	= -version-info 8:0:4
  libpe_status_la_SOURCES	=  status.c unpack.c utils.c complex.c native.c group.c clone.c rules.c common.c
 -libpe_status_la_LIBADD	=  @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la
 +libpe_status_la_LIBADD	=  @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la $(LIBXML2)
@@ -158,7 +158,7 @@
 @@ -26,6 +26,6 @@
  
  libstonithd_la_SOURCES = st_client.c
- libstonithd_la_LDFLAGS = -version-info 3:0:1
+ libstonithd_la_LDFLAGS = -version-info 3:2:1
 -libstonithd_la_LIBADD = $(top_builddir)/lib/common/libcrmcommon.la
 +libstonithd_la_LIBADD = $(top_builddir)/lib/common/libcrmcommon.la $(LIBPILS)
  

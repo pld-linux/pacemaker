@@ -14,12 +14,12 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.11
-Release:	4
+Version:	1.1.13
+Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	7cbe4f8ef2b300c3426a0c12a0c67c93
+# Source0-md5:	219a1b5864013101dae3f9977f342b87
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -45,7 +45,7 @@ BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gnutls-devel
 BuildRequires:	help2man
-%{?with_heartbeat:BuildRequires:	heartbeat-devel >= 3.0.5-6}
+%{?with_heartbeat:BuildRequires:	heartbeat-devel >= 3.0.6}
 BuildRequires:	libesmtp-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libqb-devel >= 0.13
@@ -137,9 +137,8 @@ Summary:	Pacemaker for Heartbeat cluster
 Summary(pl.UTF-8):	Pacemaker dla klastra Heartbeat
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	heartbeat
+Requires:	heartbeat >= 3.0.6
 Obsoletes:	pacemaker < 1.1
-Conflicts:	heartbeat < 2.99.0
 
 %description heartbeat
 This package allows using Pacemaker on a Heartbeat cluster.
@@ -210,10 +209,13 @@ CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{/var/run/crm,/var/log}
 
 %{__make} install \
 	mibdir=%{_datadir}/mibs \
 	DESTDIR=$RPM_BUILD_ROOT
+
+touch $RPM_BUILD_ROOT/var/log/pacemaker.log
 
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
 
@@ -297,6 +299,7 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/cibmon
 %attr(755,root,root) %{_libdir}/%{name}/crmd
 %attr(755,root,root) %{_libdir}/%{name}/lrmd
+%attr(755,root,root) %{_libdir}/%{name}/lrmd_internal_ctl
 %attr(755,root,root) %{_libdir}/%{name}/lrmd_test
 %attr(755,root,root) %{_libdir}/%{name}/pengine
 %attr(755,root,root) %{_libdir}/%{name}/stonith-test
@@ -304,6 +307,9 @@ fi
 %{_datadir}/pacemaker
 %{_datadir}/mibs/PCMK-MIB.txt
 %{py_sitedir}/cts
+%{systemdunitdir}/crm_mon.service
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/pacemaker
+%ghost /var/log/pacemaker.log
 %{_mandir}/man7/crmd.7*
 %{_mandir}/man7/ocf_pacemaker_*.7*
 %{_mandir}/man7/pengine.7*
@@ -333,6 +339,8 @@ fi
 %{_mandir}/man8/notifyServicelogEvent.8*
 %endif
 
+%dir %{_prefix}/lib/ocf/resource.d/.isolation
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/.isolation/docker-wrapper
 %dir %{_prefix}/lib/ocf/resource.d/pacemaker
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Dummy
@@ -357,13 +365,13 @@ fi
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcib.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcib.so.3
+%attr(755,root,root) %ghost %{_libdir}/libcib.so.4
 %attr(755,root,root) %{_libdir}/libcrmcluster.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libcrmcluster.so.4
 %attr(755,root,root) %{_libdir}/libcrmcommon.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libcrmcommon.so.3
 %attr(755,root,root) %{_libdir}/libcrmservice.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcrmservice.so.1
+%attr(755,root,root) %ghost %{_libdir}/libcrmservice.so.3
 %attr(755,root,root) %{_libdir}/liblrmd.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/liblrmd.so.1
 %attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
@@ -432,11 +440,6 @@ fi
 %files heartbeat
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/crm_uuid
-%attr(755,root,root) %{_libdir}/heartbeat/attrd
-%attr(755,root,root) %{_libdir}/heartbeat/cib
-%attr(755,root,root) %{_libdir}/heartbeat/crmd
-%attr(755,root,root) %{_libdir}/heartbeat/pengine
-%attr(755,root,root) %{_libdir}/heartbeat/stonithd
 %{_mandir}/man8/crm_uuid.8*
 %endif
 
