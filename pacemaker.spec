@@ -1,3 +1,4 @@
+# TODO: publican docs (BR: publican, inkscape)
 #
 # Conditional build:
 %bcond_without	corosync	# Corosync stack support
@@ -14,12 +15,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.13
+Version:	1.1.14
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
+#Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	219a1b5864013101dae3f9977f342b87
+# Source0-md5:	8f9973085512b6782c019b6d9a78ca8e
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -265,7 +267,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc doc/README* doc/*.html doc/*.txt AUTHORS COPYING*
+%doc AUTHORS ChangeLog NEWS README.markdown TODO.markdown doc/*.html doc/{executioner,msg-schema,security}.txt doc/{openstack,pcs-crmsh-quick-ref}.md
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
@@ -377,9 +379,9 @@ fi
 %attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.2
 %attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.4
+%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.10
 %attr(755,root,root) %{_libdir}/libpengine.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpengine.so.4
+%attr(755,root,root) %ghost %{_libdir}/libpengine.so.10
 %attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libstonithd.so.2
 %attr(755,root,root) %{_libdir}/libtransitioner.so.*.*.*
