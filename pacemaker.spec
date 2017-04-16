@@ -15,13 +15,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.15
-Release:	2
+Version:	1.1.16
+Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	47e0853494978bb7366a657e1fdfb12f
+# Source0-md5:	a3b9d075bc9114ff698966e57e50bb12
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -197,15 +197,18 @@ lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
 %{__automake}
 
 CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}"
+# enable systemd explicitly to avoid configure checks via dbus-send or systemctl
 %configure \
+	--disable-fatal-warnings \
+	--disable-silent-rules \
+	--enable-systemd \
+	--disable-upstart \
 	--with-acl \
 	--with-corosync%{!?with_corosync:=no} \
 	--with-esmtp \
 	--with-heartbeat%{!?with_heartbeat:=no} \
 	--with-initdir=/etc/rc.d/init.d \
-	--with-snmp \
-	--disable-fatal-warnings \
-	--disable-silent-rules
+	--with-snmp
 
 %{__make}
 
@@ -267,7 +270,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README.markdown TODO.markdown doc/*.html doc/{executioner,msg-schema,security}.txt doc/{openstack,pcs-crmsh-quick-ref}.md
+%doc ChangeLog README.markdown doc/*.html doc/{executioner,msg-schema,security}.txt doc/{openstack,pcs-crmsh-quick-ref}.md
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
@@ -351,6 +354,7 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Stateful
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SysInfo
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/attribute
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping

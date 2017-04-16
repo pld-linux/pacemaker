@@ -35,8 +35,8 @@
     AC_MSG_RESULT($XML2HEAD)
 -   AC_CHECK_LIB(xml2, xmlReadMemory)
 -   AC_CHECK_LIB(xslt, xsltApplyStylesheet)
-+   AC_CHECK_LIB(xml2, xmlReadMemory, [LIBXML2=-lxml2])
-+   AC_CHECK_LIB(xslt, xsltApplyStylesheet, [LIBXSLT=-lxslt])
++   AC_CHECK_LIB(xml2, xmlReadMemory, [AC_DEFINE([HAVE_LIBXML2], [1], [Have libxml2])  LIBXML2=-lxml2])
++   AC_CHECK_LIB(xslt, xsltApplyStylesheet, [AC_DEFINE([HAVE_LIBXSLT], [1], [Have libxslt])  LIBXSLT=-lxslt])
 +   AC_SUBST([LIBXML2])
 +   AC_SUBST([LIBXSLT])
  fi
@@ -95,72 +95,75 @@
  
  AC_SUBST(GNUTLSHEAD)
  AC_SUBST(GNUTLSLIBS)
---- pacemaker-Pacemaker-1.1.10/pengine/Makefile.am.orig	2013-07-26 02:02:31.000000000 +0200
-+++ pacemaker-Pacemaker-1.1.10/pengine/Makefile.am	2013-09-08 15:19:23.022774335 +0200
-@@ -65,10 +65,10 @@
- libpengine_la_SOURCES  += native.c group.c clone.c master.c graph.c
+--- pacemaker-Pacemaker-1.1.16/pengine/Makefile.am.orig	2017-04-16 07:34:31.132737427 +0200
++++ pacemaker-Pacemaker-1.1.16/pengine/Makefile.am	2017-04-16 07:37:33.349402011 +0200
+@@ -66,14 +66,14 @@
+ libpengine_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
- libpengine_la_LIBADD    = $(top_builddir)/lib/pengine/libpe_status.la \
--	$(top_builddir)/lib/cib/libcib.la
-+	$(top_builddir)/lib/cib/libcib.la $(LIBXML2)
+ libpengine_la_LIBADD	= $(top_builddir)/lib/pengine/libpe_status.la \
+-			$(top_builddir)/lib/cib/libcib.la
++			$(top_builddir)/lib/cib/libcib.la $(LIBXML2)
+ # -L$(top_builddir)/lib/pils -lpils -export-dynamic -module -avoid-version
+ libpengine_la_SOURCES	= pengine.c allocate.c notif.c utils.c constraints.c
+ libpengine_la_SOURCES	+= native.c group.c clone.c master.c graph.c utilization.c
  
- pengine_SOURCES	= main.c
+ pengine_CFLAGS	= $(CFLAGS_HARDENED_EXE)
+ pengine_LDFLAGS	= $(LDFLAGS_HARDENED_EXE)
 -pengine_LDADD	= $(top_builddir)/lib/cib/libcib.la $(COMMONLIBS)
 +pengine_LDADD	= $(top_builddir)/lib/cib/libcib.la $(COMMONLIBS) $(libqb_LIBS)
  # libcib for get_object_root()
  #		$(top_builddir)/lib/hbclient/libhbclient.la
+ pengine_SOURCES	= main.c
+--- pacemaker-Pacemaker-1.1.16/lib/common/Makefile.am.orig	2017-04-16 07:34:31.132737427 +0200
++++ pacemaker-Pacemaker-1.1.16/lib/common/Makefile.am	2017-04-16 07:38:38.076067942 +0200
+@@ -36,7 +36,7 @@
+ libcrmcommon_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
+ libcrmcommon_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
---- pacemaker-Pacemaker-1.1.15/lib/common/Makefile.am.orig	2016-10-16 18:29:06.350414143 +0200
-+++ pacemaker-Pacemaker-1.1.15/lib/common/Makefile.am	2016-10-16 18:32:31.890411797 +0200
-@@ -41,7 +41,7 @@
- endif
+-libcrmcommon_la_LIBADD	= @LIBADD_DL@ $(GNUTLSLIBS) -lm
++libcrmcommon_la_LIBADD	= @LIBADD_DL@ $(LIBPLUMB) $(GNUTLSLIBS) $(LIBXML2) $(LIBXSLT) $(libqb_LIBS) $(LIBBZ2) $(LIBUUID) -lm
  
- libcrmcommon_la_LDFLAGS	= -version-info 9:0:6
--libcrmcommon_la_LIBADD  = @LIBADD_DL@ $(GNUTLSLIBS) -lm
-+libcrmcommon_la_LIBADD  = @LIBADD_DL@ $(LIBPLUMB) $(GNUTLSLIBS) $(LIBXML2) $(LIBXSLT) $(libqb_LIBS) $(LIBBZ2) $(LIBUUID) -lm
- libcrmcommon_la_SOURCES += $(top_builddir)/lib/gnu/md5.c
+ libcrmcommon_la_SOURCES	= compat.c digest.c ipc.c io.c procfs.c utils.c xml.c \
+ 			  iso8601.c remote.c mainloop.c logging.c watchdog.c \
+--- pacemaker-Pacemaker-1.1.16/lib/cib/Makefile.am.orig	2017-04-16 07:34:31.132737427 +0200
++++ pacemaker-Pacemaker-1.1.16/lib/cib/Makefile.am	2017-04-16 07:39:18.802734141 +0200
+@@ -30,7 +30,7 @@
+ libcib_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
+ libcib_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
- clean-generic:
---- pacemaker-Pacemaker-1.1.15/lib/cib/Makefile.am.orig	2016-04-09 22:03:33.010625713 +0200
-+++ pacemaker-Pacemaker-1.1.15/lib/cib/Makefile.am	2016-04-09 22:04:03.627291096 +0200
-@@ -29,7 +29,7 @@
- libcib_la_SOURCES      += cib_file.c cib_remote.c
- 
- libcib_la_LDFLAGS	= -version-info 5:1:1 -L$(top_builddir)/lib/pengine/.libs
--libcib_la_LIBADD        = $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la
-+libcib_la_LIBADD        = $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la $(GNUTLSLIBS)
- libcib_la_CFLAGS	= -I$(top_srcdir)
- 
- clean-generic:
---- pacemaker-Pacemaker-1.1.15/lib/pengine/Makefile.am.orig	2016-10-16 18:34:09.067077354 +0200
-+++ pacemaker-Pacemaker-1.1.15/lib/pengine/Makefile.am	2016-10-16 18:35:12.180409966 +0200
-@@ -33,7 +33,7 @@
- libpe_status_la_LDFLAGS	= -version-info 11:0:1
- libpe_status_la_SOURCES	=  status.c unpack.c utils.c complex.c native.c \
- 			   group.c clone.c rules.c common.c remote.c
--libpe_status_la_LIBADD	=  @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la
-+libpe_status_la_LIBADD	=  @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la $(LIBXML2)
+-libcib_la_LIBADD	= $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la
++libcib_la_LIBADD	= $(CRYPTOLIB) $(top_builddir)/lib/pengine/libpe_rules.la $(top_builddir)/lib/common/libcrmcommon.la $(GNUTLSLIBS)
  
  clean-generic:
- 	rm -f *.log *.debug *~
---- pacemaker-Pacemaker-1.1.15/lib/fencing/Makefile.am.orig	2016-04-09 22:03:33.013959047 +0200
-+++ pacemaker-Pacemaker-1.1.15/lib/fencing/Makefile.am	2016-04-09 22:04:30.660623301 +0200
-@@ -26,6 +26,6 @@
+ 	rm -f *.log *.debug *.xml *~
+--- pacemaker-Pacemaker-1.1.16/lib/pengine/Makefile.am.orig	2017-04-16 07:34:31.136070760 +0200
++++ pacemaker-Pacemaker-1.1.16/lib/pengine/Makefile.am	2017-04-16 07:40:06.976066925 +0200
+@@ -36,7 +36,7 @@
+ libpe_status_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
+ libpe_status_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
- libstonithd_la_SOURCES = st_client.c
- libstonithd_la_LDFLAGS = -version-info 4:1:2
--libstonithd_la_LIBADD = $(top_builddir)/lib/common/libcrmcommon.la
-+libstonithd_la_LIBADD = $(top_builddir)/lib/common/libcrmcommon.la $(LIBPILS)
+-libpe_status_la_LIBADD	= @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la
++libpe_status_la_LIBADD	= @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la $(LIBXML2)
+ libpe_status_la_SOURCES	= status.c unpack.c utils.c complex.c native.c \
+ 			group.c clone.c rules.c common.c remote.c
  
- AM_CFLAGS = $(AM_CPPFLAGS)
---- pacemaker-Pacemaker-1.1.10/cib/Makefile.am.orig	2013-07-26 02:02:31.000000000 +0200
-+++ pacemaker-Pacemaker-1.1.10/cib/Makefile.am	2013-09-08 17:11:22.042492364 +0200
-@@ -48,7 +48,7 @@
- 			callbacks.c main.c remote.c common.c
+--- pacemaker-Pacemaker-1.1.16/lib/fencing/Makefile.am.orig	2017-04-16 07:34:31.236070760 +0200
++++ pacemaker-Pacemaker-1.1.16/lib/fencing/Makefile.am	2017-04-16 07:42:06.086065565 +0200
+@@ -25,5 +25,5 @@
+ libstonithd_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
+ libstonithd_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
- cib_LDADD		= $(top_builddir)/lib/cluster/libcrmcluster.la \
--			  $(COMMONLIBS) $(CRYPTOLIB) $(CLUSTERLIBS)
-+			  $(COMMONLIBS) $(CRYPTOLIB) $(CLUSTERLIBS) $(LIBPAM)
+-libstonithd_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
++libstonithd_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la $(LIBPILS)
+ libstonithd_la_SOURCES	= st_client.c
+--- pacemaker-Pacemaker-1.1.16/cib/Makefile.am.orig	2017-04-16 07:34:31.236070760 +0200
++++ pacemaker-Pacemaker-1.1.16/cib/Makefile.am	2017-04-16 07:42:50.786065054 +0200
+@@ -36,7 +36,7 @@
+ cib_LDFLAGS	= $(LDFLAGS_HARDENED_EXE)
  
- cibmon_SOURCES		= cibmon.c
- cibmon_LDADD		= $(COMMONLIBS)
+ cib_LDADD	= $(top_builddir)/lib/cluster/libcrmcluster.la \
+-		$(COMMONLIBS) $(CRYPTOLIB) $(CLUSTERLIBS)
++		$(COMMONLIBS) $(CRYPTOLIB) $(CLUSTERLIBS) $(LIBPAM)
+ 
+ cib_SOURCES	= io.c messages.c notify.c \
+ 		callbacks.c main.c remote.c common.c
