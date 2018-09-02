@@ -1,5 +1,13 @@
 --- pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c.orig	2013-07-26 02:02:31.000000000 +0200
 +++ pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c	2013-09-07 22:08:44.162036132 +0200
+@@ -27,6 +27,7 @@
+ #include <syslog.h>
+ #include <unistd.h>
+ #include <config.h>
++#include <crm/attrd.h>
+ #include <crm/common/xml.h>
+ #include <crm/common/util.h>
+ #include <crm_internal.h>
 @@ -31,13 +31,13 @@
  #include <crm/common/util.h>
  #include <crm_internal.h>
@@ -49,18 +57,6 @@
          const char *health_component = "#health-ipmi";
          const char *health_status = NULL;
  
-@@ -167,9 +167,9 @@
-         if (health_status) {
-             gboolean rc;
- 
--            rc = attrd_update_no_mainloop(NULL,
-+            rc = (attrd_update_delegate(NULL,
-                                           'v',
--                                          NULL, health_component, health_status, NULL, NULL, NULL);
-+                                          NULL, health_component, health_status, NULL, NULL, NULL, NULL) > 0);
- 
-             crm_debug("attrd_update_no_mainloop ('%s', '%s') = %d",
-                       health_component, health_status, rc);
 --- pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c.orig	2013-07-26 02:02:31.000000000 +0200
 +++ pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c	2013-09-07 22:09:35.002033998 +0200
 @@ -565,7 +565,7 @@

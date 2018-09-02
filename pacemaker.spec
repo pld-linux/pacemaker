@@ -15,13 +15,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.16
+Version:	1.1.19
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	a3b9d075bc9114ff698966e57e50bb12
+# Source0-md5:	335dab2fd6b3a284a6bd2bbeef60c960
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -103,6 +103,7 @@ Pacemaker był wcześniej częścią pakietu Heartbeat.
 Summary:	Pacemaker libraries
 Summary(pl.UTF-8):	Biblioteki Pacemakera
 Group:		Libraries
+Requires:	libqb >= 0.13
 
 %description libs
 Shared libraries for Pacemaker.
@@ -298,17 +299,17 @@ fi
 %endif
 %attr(755,root,root) %{_sbindir}/notifyServicelogEvent
 %endif
-%dir %{_libdir}/%{name}
-%attr(755,root,root) %{_libdir}/%{name}/attrd
-%attr(755,root,root) %{_libdir}/%{name}/cib
-%attr(755,root,root) %{_libdir}/%{name}/cibmon
-%attr(755,root,root) %{_libdir}/%{name}/crmd
-%attr(755,root,root) %{_libdir}/%{name}/lrmd
-%attr(755,root,root) %{_libdir}/%{name}/lrmd_internal_ctl
-%attr(755,root,root) %{_libdir}/%{name}/lrmd_test
-%attr(755,root,root) %{_libdir}/%{name}/pengine
-%attr(755,root,root) %{_libdir}/%{name}/stonith-test
-%attr(755,root,root) %{_libdir}/%{name}/stonithd
+%dir %{_libexecdir}/%{name}
+%attr(755,root,root) %{_libexecdir}/%{name}/attrd
+%attr(755,root,root) %{_libexecdir}/%{name}/cib
+%attr(755,root,root) %{_libexecdir}/%{name}/cibmon
+%attr(755,root,root) %{_libexecdir}/%{name}/crmd
+%attr(755,root,root) %{_libexecdir}/%{name}/lrmd
+%attr(755,root,root) %{_libexecdir}/%{name}/lrmd_internal_ctl
+%attr(755,root,root) %{_libexecdir}/%{name}/lrmd_test
+%attr(755,root,root) %{_libexecdir}/%{name}/pengine
+%attr(755,root,root) %{_libexecdir}/%{name}/stonith-test
+%attr(755,root,root) %{_libexecdir}/%{name}/stonithd
 %{_datadir}/pacemaker
 %{_datadir}/mibs/PCMK-MIB.txt
 %{py_sitedir}/cts
@@ -356,6 +357,7 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/attribute
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
+%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ifspeed
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
