@@ -16,7 +16,7 @@ Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
 Version:	1.1.19
-Release:	1
+Release:	2
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
@@ -30,6 +30,7 @@ Patch1:		%{name}-manpage_xslt.patch
 Patch2:		%{name}-update.patch
 Patch3:		%{name}-man.patch
 Patch4:		%{name}-libs.patch
+Patch5:		%{name}-heartbeat-libexecdir.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 %{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
@@ -189,6 +190,7 @@ lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 %{__libtoolize}
