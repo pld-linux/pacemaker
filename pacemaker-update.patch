@@ -1,13 +1,5 @@
 --- pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c.orig	2013-07-26 02:02:31.000000000 +0200
 +++ pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c	2013-09-07 22:08:44.162036132 +0200
-@@ -27,6 +27,7 @@
- #include <syslog.h>
- #include <unistd.h>
- #include <config.h>
-+#include <crm/attrd.h>
- #include <crm/common/xml.h>
- #include <crm/common/util.h>
- #include <crm_internal.h>
 @@ -31,13 +31,13 @@
  #include <crm/common/util.h>
  #include <crm_internal.h>
@@ -39,15 +31,6 @@
  
      crm_debug("Severity = %d, Disposition = %d", event->severity, event->disposition);
  
-@@ -91,7 +91,7 @@
-     struct sl_event *event = NULL;
-     uint64_t event_id = 0;
- 
--    crm_log_init_quiet("notifyServicelogEvent", LOG_INFO, FALSE, TRUE, argc, argv);
-+    crm_log_init("notifyServicelogEvent", LOG_INFO, FALSE, TRUE, argc, argv, TRUE);
-     crm_set_options(NULL, "event_id ", long_options,
-                     "Gets called upon events written to servicelog database");
- 
 @@ -153,7 +153,7 @@
      }
  
@@ -57,14 +40,3 @@
          const char *health_component = "#health-ipmi";
          const char *health_status = NULL;
  
---- pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c.orig	2013-07-26 02:02:31.000000000 +0200
-+++ pacemaker-Pacemaker-1.1.10/tools/ipmiservicelogd.c	2013-09-07 22:09:35.002033998 +0200
-@@ -565,7 +565,7 @@
- 
-     crm_make_daemon("ipmiservicelogd", TRUE, "/var/run/ipmiservicelogd.pid0");
- 
--    crm_log_init("ipmiservicelogd", LOG_INFO, FALSE, TRUE, argc, argv);
-+    crm_log_init("ipmiservicelogd", LOG_INFO, FALSE, TRUE, argc, argv, FALSE);
- 
- #ifdef COMPLEX
-     rv = ipmi_args_setup_con(args, os_hnd, NULL, &con);

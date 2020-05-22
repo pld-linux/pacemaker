@@ -1,6 +1,6 @@
---- pacemaker-Pacemaker-1.1.15/configure.ac.orig	2016-10-16 18:23:45.477084475 +0200
-+++ pacemaker-Pacemaker-1.1.15/configure.ac	2016-10-16 18:28:32.400414530 +0200
-@@ -655,17 +655,21 @@
+--- pacemaker-Pacemaker-1.1.22/configure.ac.orig	2020-05-01 18:26:26.206360554 +0200
++++ pacemaker-Pacemaker-1.1.22/configure.ac	2020-05-01 18:32:45.394306317 +0200
+@@ -807,17 +807,21 @@
  dnl ===============================================
  dnl Libraries
  dnl ===============================================
@@ -29,7 +29,7 @@
  
  AC_CHECK_HEADERS(uuid/uuid.h)
  
-@@ -813,8 +817,10 @@
+@@ -941,8 +945,10 @@
  else
     XML2HEAD="`$XML2CONFIG --cflags`"
     AC_MSG_RESULT($XML2HEAD)
@@ -42,7 +42,7 @@
  fi
  
  CPPFLAGS="$CPPFLAGS $XML2HEAD"
-@@ -882,7 +888,8 @@
+@@ -988,7 +994,8 @@
  dnl   bzip2
  dnl ========================================================================
  AC_CHECK_HEADERS(bzlib.h)
@@ -52,15 +52,15 @@
  
  if test x$ac_cv_lib_bz2_BZ2_bzBuffToBuffCompress != xyes ; then
     AC_MSG_ERROR(BZ2 libraries not found)
-@@ -1052,7 +1059,6 @@
+@@ -1158,7 +1165,6 @@
  
- PKG_CHECK_MODULES(libqb, libqb >= 0.13, HAVE_libqb=1)
+ PKG_CHECK_MODULES(libqb, libqb >= 0.13)
  CPPFLAGS="$libqb_CFLAGS $CPPFLAGS"
 -LIBS="$libqb_LIBS $LIBS"
  AC_CHECK_HEADERS(qb/qbipc_common.h)
  AC_CHECK_LIB(qb, qb_ipcs_connection_auth_set)
  
-@@ -1086,8 +1092,10 @@
+@@ -1193,8 +1199,10 @@
  if test $HAVE_GLUE = 1; then
     dnl On Debian, AC_CHECK_LIBS fail if a library has any unresolved symbols
     dnl So check for all the dependencies (so they're added to LIBS) before checking for -lplumb
@@ -73,7 +73,7 @@
  fi
  
  dnl ===============================================
-@@ -1599,7 +1607,7 @@
+@@ -1776,7 +1784,7 @@
      AC_MSG_RESULT($SUPPORT_ACL)
  
      SUPPORT_ACL=1
@@ -82,7 +82,7 @@
      if test $ac_cv_lib_qb_qb_ipcs_connection_auth_set != yes; then
          SUPPORT_ACL=0
      fi
-@@ -1665,8 +1673,11 @@
+@@ -1842,9 +1850,12 @@
  	GNUTLSLIBS="`$LIBGNUTLS_CONFIG --libs`";
  	AC_MSG_RESULT($GNUTLSLIBS)
  fi
@@ -91,6 +91,7 @@
 +oldLIBS="$LIBS"
 +LIBS="$LIBS $GNUTLSLIBS"
  AC_CHECK_FUNCS(gnutls_priority_set_direct)
+  AC_CHECK_FUNCS([gnutls_sec_param_to_pk_bits]) dnl since 2.12.0 (2011-03-24)
 +LIBS="$oldLIBS"
  
  AC_SUBST(GNUTLSHEAD)
@@ -136,25 +137,24 @@
  
  clean-generic:
  	rm -f *.log *.debug *.xml *~
---- pacemaker-Pacemaker-1.1.19/lib/pengine/Makefile.am.orig	2018-09-02 14:49:08.336794196 +0200
-+++ pacemaker-Pacemaker-1.1.19/lib/pengine/Makefile.am	2018-09-02 15:23:34.093437276 +0200
+--- pacemaker-Pacemaker-1.1.22/lib/pengine/Makefile.am.orig	2020-05-01 18:33:26.394084202 +0200
++++ pacemaker-Pacemaker-1.1.22/lib/pengine/Makefile.am	2020-05-01 18:38:21.532485300 +0200
 @@ -36,7 +36,7 @@
  libpe_status_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
  libpe_status_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
 -libpe_status_la_LIBADD	= @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la
 +libpe_status_la_LIBADD	= @CURSESLIBS@ $(top_builddir)/lib/common/libcrmcommon.la $(LIBXML2)
- libpe_status_la_SOURCES	= status.c unpack.c utils.c complex.c native.c container.c \
- 			group.c clone.c rules.c common.c failcounts.c remote.c
+ # Use += rather than backlashed continuation lines for parsing by bumplibs.sh
+ libpe_status_la_SOURCES        =
+ libpe_status_la_SOURCES        += container.c
+--- pacemaker-Pacemaker-1.1.22/lib/fencing/Makefile.am.orig	2020-05-01 18:33:26.394084202 +0200
++++ pacemaker-Pacemaker-1.1.22/lib/fencing/Makefile.am	2020-05-01 18:37:57.309283195 +0200
+@@ -16,6 +16,7 @@
  
---- pacemaker-Pacemaker-1.1.19/lib/fencing/Makefile.am.orig	2018-09-02 14:49:08.340127529 +0200
-+++ pacemaker-Pacemaker-1.1.19/lib/fencing/Makefile.am	2018-09-02 15:24:03.616770271 +0200
-@@ -14,7 +14,7 @@
- libstonithd_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
- libstonithd_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
- 
--libstonithd_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
-+libstonithd_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la $(LIBPILS)
+ libstonithd_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
+ libstonithd_la_LIBADD   += $(top_builddir)/lib/services/libcrmservice.la
++libstonithd_la_LIBADD   += $(LIBPILS)
  
  libstonithd_la_SOURCES	= st_client.c st_rhcs.c
  if BUILD_LHA_SUPPORT

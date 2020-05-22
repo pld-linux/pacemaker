@@ -1,10 +1,10 @@
-# TODO: publican docs (BR: publican, inkscape)
 #
 # Conditional build:
 %bcond_without	corosync	# Corosync stack support
 %bcond_without	heartbeat	# Heartbeat stack support
 %bcond_without	servicelog	# ServiceLog support [IBM PPC specific]
 %bcond_without	ipmi		# IPMI ServiceLog support [IBM PPC specific]
+%bcond_without	doc		# documentation
 #
 %ifnarch ppc ppc64
 %undefine	with_servicelog
@@ -15,20 +15,19 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	1.1.19
-Release:	3
+Version:	1.1.22
+Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	335dab2fd6b3a284a6bd2bbeef60c960
+# Source0-md5:	ae655914911680a34faf6b0b5033fc6f
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-automake.patch
 Patch1:		%{name}-manpage_xslt.patch
 Patch2:		%{name}-update.patch
-Patch3:		%{name}-man.patch
 Patch4:		%{name}-libs.patch
 Patch5:		%{name}-heartbeat-libexecdir.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
@@ -68,6 +67,10 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	systemd-units
 BuildRequires:	swig
+%if %{with doc}
+BuildRequires:	inkscape
+BuildRequires:	publican
+%endif
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	cluster-glue
 Requires:	resource-agents
@@ -136,6 +139,24 @@ Static Pacemaker libraries.
 %description static -l pl.UTF-8
 Statyczne biblioteki Pacemakera.
 
+%package remote
+Summary:	Remote services manager for Pacemaker
+Summary(pl.UTF-8):	Zarządca usług zdalnych dla Pacemakera
+Group:		Applications/System
+Requires:	systemd-units >= 38
+Requires:	%{name} = %{version}-%{release}
+
+%description remote
+This package allows running Pacemaker-managed services on 'virtual'
+nodes without actual cluster stack. This is useful to manage services
+in virtual machines or containers running on a Pacemaker cluster.
+
+%description remote -l pl.UTF-8
+Ten pakiet pozwala na uruchamianie usług zarządzanych przez Pacemakera
+na węzłach "wirtualnych" bez zainstalowanego całego stosu klastrowego.
+Jest to przydatne przy zarządzaniu usługami na maszynach wirtualncych
+lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
+
 %package heartbeat
 Summary:	Pacemaker for Heartbeat cluster
 Summary(pl.UTF-8):	Pacemaker dla klastra Heartbeat
@@ -165,30 +186,22 @@ This package allows using Pacemaker on a Corosync cluster.
 %description corosync -l pl.UTF-8
 Ten pakiet pozwala na używanie Pacemakera na klastrze Corosync.
 
-%package remote
-Summary:	Remote services manager for Pacemaker
-Summary(pl.UTF-8):	Zarządca usług zdalnych dla Pacemakera
-Group:		Applications/System
-Requires:	systemd-units >= 38
-Requires:	%{name} = %{version}-%{release}
+%package doc
+Summary:	Pacemaker documentation
+Summary(pl.UTF-8):	Dokumentacja do Pacemakera
+Group:		Documentation
 
-%description remote
-This package allows running Pacemaker-managed services on 'virtual'
-nodes without actual cluster stack. This is useful to manage services
-in virtual machines or containers running on a Pacemaker cluster.
+%description doc
+Pacemaker documentation.
 
-%description remote -l pl.UTF-8
-Ten pakiet pozwala na uruchamianie usług zarządzanych przez Pacemakera
-na węzłach "wirtualnych" bez zainstalowanego całego stosu klastrowego.
-Jest to przydatne przy zarządzaniu usługami na maszynach wirtualncych
-lub w kontenerach uruchomionych na klastrze opartym o Pacemaker.
+%description doc -l pl.UTF-8
+Dokumentacja do Pacemakera.
 
 %prep
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 
@@ -225,9 +238,11 @@ install -d $RPM_BUILD_ROOT{/var/run/crm,/var/log}
 
 touch $RPM_BUILD_ROOT/var/log/pacemaker.log
 
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/pacemaker/tests
+# package as %doc
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,acls.*,crm_fencing.*,licenses}
 
-install -D %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
+install -D %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %if %{with corosync}
 install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -D %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
@@ -344,6 +359,9 @@ fi
 %{_mandir}/man8/iso8601.8*
 %{_mandir}/man8/stonith_admin.8*
 %if %{with servicelog}
+%if %{with ipmi}
+%{_mandir}/man8/ipmiservicelogd.8*
+%endif
 %{_mandir}/man8/notifyServicelogEvent.8*
 %endif
 
@@ -370,7 +388,7 @@ fi
 %dir %attr(750,hacluster,haclient) /var/lib/%{name}/cib
 %dir %attr(750,hacluster,haclient) /var/lib/%{name}/pengine
 %dir %attr(750,hacluster,haclient) %{_var}/run/crm
-/usr/lib/tmpfiles.d/%{name}.conf
+%{systemdtmpfilesdir}/%{name}.conf
 
 %files libs
 %defattr(644,root,root,755)
@@ -387,9 +405,9 @@ fi
 %attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.2
 %attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.10
+%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.16
 %attr(755,root,root) %{_libdir}/libpengine.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpengine.so.10
+%attr(755,root,root) %ghost %{_libdir}/libpengine.so.16
 %attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libstonithd.so.2
 %attr(755,root,root) %{_libdir}/libtransitioner.so.*.*.*
@@ -460,4 +478,14 @@ fi
 %attr(755,root,root) /etc/rc.d/init.d/%{name}
 %{systemdunitdir}/%{name}.service
 %{_mandir}/man8/pacemakerd.8*
+%endif
+
+%if %{with doc}
+%files doc
+%defattr(644,root,root,755)
+%dir %{_docdir}/pacemaker
+%{_docdir}/pacemaker/Clusters_from_Scratch
+%{_docdir}/pacemaker/Pacemaker_Development
+%{_docdir}/pacemaker/Pacemaker_Explained
+%{_docdir}/pacemaker/Pacemaker_Remote
 %endif
