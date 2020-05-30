@@ -1,29 +1,29 @@
---- pacemaker-Pacemaker-1.1.14/configure.ac.orig	2016-04-09 21:34:06.520699847 +0200
-+++ pacemaker-Pacemaker-1.1.14/configure.ac	2016-04-09 21:49:29.907327769 +0200
-@@ -558,27 +558,7 @@
-    PCMK_FEATURES="$PCMK_FEATURES generated-manpages"
+--- pacemaker-Pacemaker-2.0.3/configure.ac.orig	2020-05-27 21:20:14.380073396 +0200
++++ pacemaker-Pacemaker-2.0.3/configure.ac	2020-05-27 21:24:07.088812705 +0200
+@@ -713,27 +713,7 @@
+     PCMK_FEATURES="$PCMK_FEATURES generated-manpages"
  fi
  
 -MANPAGE_XSLT=""
 -if test x"${XSLTPROC}" != x""; then
--  AC_MSG_CHECKING(docbook to manpage transform)
--  # first try to figure out correct template using xmlcatalog query,
--  # resort to extensive (semi-deterministic) file search if that fails
--  DOCBOOK_XSL_URI='http://docbook.sourceforge.net/release/xsl/current'
--  DOCBOOK_XSL_PATH='manpages/docbook.xsl'
--  MANPAGE_XSLT=$(${XMLCATALOG} "" ${DOCBOOK_XSL_URI}/${DOCBOOK_XSL_PATH} \
--                 | sed -n 's|^file://||p;q')
--  if test x"${MANPAGE_XSLT}" = x""; then
--    DIRS=$(find "${datadir}" -name $(basename $(dirname ${DOCBOOK_XSL_PATH})) \
--           -type d | LC_ALL=C sort)
--    XSLT=$(basename ${DOCBOOK_XSL_PATH})
--    for d in ${DIRS}; do
--      if test -f "${d}/${XSLT}"; then
--         MANPAGE_XSLT="${d}/${XSLT}"
--         break
--      fi
--    done
--  fi
+-    AC_MSG_CHECKING(docbook to manpage transform)
+-    # first try to figure out correct template using xmlcatalog query,
+-    # resort to extensive (semi-deterministic) file search if that fails
+-    DOCBOOK_XSL_URI='http://docbook.sourceforge.net/release/xsl/current'
+-    DOCBOOK_XSL_PATH='manpages/docbook.xsl'
+-    MANPAGE_XSLT=$(${XMLCATALOG} "" ${DOCBOOK_XSL_URI}/${DOCBOOK_XSL_PATH} \
+-                   | sed -n 's|^file://||p;q')
+-    if test x"${MANPAGE_XSLT}" = x""; then
+-        DIRS=$(find "${datadir}" -name $(basename $(dirname ${DOCBOOK_XSL_PATH})) \
+-               -type d | LC_ALL=C sort)
+-        XSLT=$(basename ${DOCBOOK_XSL_PATH})
+-        for d in ${DIRS}; do
+-            if test -f "${d}/${XSLT}"; then
+-                 MANPAGE_XSLT="${d}/${XSLT}"
+-                 break
+-            fi
+-        done
+-    fi
 -fi
 +MANPAGE_XSLT="/usr/share/sgml/docbook/xsl-stylesheets/manpages/docbook.xsl"
  AC_MSG_RESULT($MANPAGE_XSLT)
