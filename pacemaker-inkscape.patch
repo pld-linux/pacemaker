@@ -1,0 +1,19 @@
+--- pacemaker-Pacemaker-2.0.3/doc/Makefile.am.orig	2019-11-25 23:54:47.000000000 +0100
++++ pacemaker-Pacemaker-2.0.3/doc/Makefile.am	2020-05-28 06:15:03.122900431 +0200
+@@ -85,13 +85,13 @@
+ graphics: $(PNGS)
+ 
+ %.png: %.svg
+-	$(AM_V_GEN)$(INKSCAPE) --file=$< --export-dpi=90 -C --export-png=$@ $(PCMK_quiet)
++	$(AM_V_GEN)$(INKSCAPE) $< --export-dpi=90 -C -o $@ $(PCMK_quiet)
+ 
+ %-small.png: %.svg
+-	$(AM_V_GEN)$(INKSCAPE) --file=$< --export-dpi=45 -C --export-png=$@ $(PCMK_quiet)
++	$(AM_V_GEN)$(INKSCAPE) $< --export-dpi=45 -C -o $@ $(PCMK_quiet)
+ 
+ %-large.png: %.svg
+-	$(AM_V_GEN)$(INKSCAPE) --file=$< --export-dpi=180 -C --export-png=$@ $(PCMK_quiet)
++	$(AM_V_GEN)$(INKSCAPE) $< --export-dpi=180 -C -o $@ $(PCMK_quiet)
+ 
+ if IS_ASCIIDOC
+ ASCIIDOC_HTML_ARGS	= --unsafe --backend=xhtml11
