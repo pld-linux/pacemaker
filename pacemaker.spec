@@ -30,6 +30,8 @@ Patch1:		%{name}-manpage_xslt.patch
 Patch2:		%{name}-update.patch
 Patch4:		%{name}-libs.patch
 Patch5:		%{name}-heartbeat-libexecdir.patch
+Patch6:		%{name}-no-common.patch
+Patch7:		%{name}-inkscape.patch
 URL:		http://clusterlabs.org/wiki/Main_Page
 %{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
@@ -68,7 +70,7 @@ BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	systemd-units
 BuildRequires:	swig
 %if %{with doc}
-BuildRequires:	inkscape
+BuildRequires:	inkscape >= 1.0
 BuildRequires:	publican
 %endif
 Requires:	%{name}-libs = %{version}-%{release}
@@ -204,6 +206,8 @@ Dokumentacja do Pacemakera.
 %patch2 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
 %{__libtoolize}

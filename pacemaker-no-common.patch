@@ -1,0 +1,11 @@
+--- pacemaker-Pacemaker-1.1.22/lrmd/lrmd_private.h.orig	2019-11-27 01:47:19.000000000 +0100
++++ pacemaker-Pacemaker-1.1.22/lrmd/lrmd_private.h	2020-05-31 09:47:18.614948846 +0200
+@@ -32,7 +32,7 @@
+ 
+ #define LRMD_ISOLATION_PROVIDER ".isolation"
+ 
+-GHashTable *rsc_list;
++extern GHashTable *rsc_list;
+ 
+ typedef struct lrmd_rsc_s {
+     char *rsc_id;
