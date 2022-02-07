@@ -1,3 +1,6 @@
+# TODO:
+# - Source2 vs upstream provided pacemaker.service file
+# - readd pacemaker_remote.init or drop SysV completely
 #
 # Conditional build:
 %bcond_without	corosync	# Corosync stack support
@@ -15,16 +18,17 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.0.5
+Version:	2.1.2
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	c36c8ed401e39ff3e727ba4bf5fcc2e7
+# Source0-md5:	544c832d5e3d136f74822d89f31f8110
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
+Patch0:		%{name}-link.patch
 Patch1:		%{name}-manpage_xslt.patch
 Patch2:		%{name}-update.patch
 URL:		https://wiki.clusterlabs.org/wiki/Pacemaker
@@ -38,7 +42,7 @@ BuildRequires:	cluster-glue-libs-devel
 BuildRequires:	dbus-devel
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.16.0
+BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gnutls-devel >= 2.12.0
 BuildRequires:	help2man
 BuildRequires:	libltdl-devel
@@ -52,7 +56,7 @@ BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
-BuildRequires:	python-devel >= 1:2.7
+BuildRequires:	python3-devel >= 1:3.2
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
@@ -98,7 +102,7 @@ Pacemaker był wcześniej częścią pakietu Heartbeat.
 Summary:	Pacemaker libraries
 Summary(pl.UTF-8):	Biblioteki Pacemakera
 Group:		Libraries
-Requires:	glib2 >= 1:2.16.0
+Requires:	glib2 >= 1:2.32.0
 Requires:	gnutls-libs >= 2.12.0
 Requires:	libqb >= 0.17.0
 
@@ -115,7 +119,7 @@ Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	bzip2-devel
 Requires:	dbus-devel
-Requires:	glib2-devel >= 1:2.16.0
+Requires:	glib2-devel >= 1:2.32.0
 Requires:	gnutls-devel >= 2.12.0
 Requires:	libqb-devel >= 0.17.0
 Requires:	libxml2-devel >= 2.0
@@ -187,6 +191,7 @@ Dokumentacja do Pacemakera.
 
 %prep
 %setup -qn pacemaker-Pacemaker-%{version}
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
@@ -199,13 +204,12 @@ Dokumentacja do Pacemakera.
 
 # enable systemd explicitly to avoid configure checks via dbus-send or systemctl
 %configure \
-	PYTHON=%{__python} \
+	PYTHON=%{__python3} \
 	--disable-fatal-warnings \
 	--disable-silent-rules \
 	%{__enable_disable static_libs static} \
 	--enable-systemd \
 	--disable-upstart \
-	--with-acl \
 	--with-corosync%{!?with_corosync:=no} \
 	--with-initdir=/etc/rc.d/init.d
 
@@ -256,8 +260,6 @@ fi
 %systemd_reload
 
 %post remote
-/sbin/chkconfig --add pacemaker_remote
-%service pacemaker_remote restart "pacemaker_remote daemon"
 %systemd_post pacemaker_remote.service
 
 %preun remote
@@ -271,7 +273,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog README.markdown doc/*.html doc/security.txt doc/{openstack,pcs-crmsh-quick-ref}.md
+%doc ChangeLog README.markdown doc/*.html doc/security.txt
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
@@ -291,6 +293,7 @@ fi
 %attr(755,root,root) %{_sbindir}/crm_verify
 %attr(755,root,root) %{_sbindir}/crmadmin
 %attr(755,root,root) %{_sbindir}/fence_legacy
+%attr(755,root,root) %{_sbindir}/fence_watchdog
 %attr(755,root,root) %{_sbindir}/iso8601
 %attr(755,root,root) %{_sbindir}/stonith_admin
 %if %{with servicelog}
@@ -300,28 +303,22 @@ fi
 %attr(755,root,root) %{_sbindir}/notifyServicelogEvent
 %endif
 %dir %{_libexecdir}/%{name}
-%attr(755,root,root) %{_libexecdir}/%{name}/attrd
-%attr(755,root,root) %{_libexecdir}/%{name}/cib
-%attr(755,root,root) %{_libexecdir}/%{name}/cibmon
-%attr(755,root,root) %{_libexecdir}/%{name}/crmd
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-exec-helper
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-fence-helper
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-log-watcher
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-support
-%attr(755,root,root) %{_libexecdir}/%{name}/lrmd
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-attrd
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-based
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-controld
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-execd
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-fenced
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-schedulerd
-%attr(755,root,root) %{_libexecdir}/%{name}/pengine
-%attr(755,root,root) %{_libexecdir}/%{name}/stonithd
 %{_datadir}/pacemaker
 %{_datadir}/mibs/PCMK-MIB.txt
-%{py_sitescriptdir}/cts
+%{py3_sitescriptdir}/cts
 %{systemdunitdir}/crm_mon.service
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/pacemaker
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/crm_mon
 %attr(750,root,haclient) %dir %{_sysconfdir}/pacemaker
 %ghost /var/log/pacemaker.log
 %{_mandir}/man7/ocf_pacemaker_*.7*
@@ -347,6 +344,7 @@ fi
 %{_mandir}/man8/crm_verify.8*
 %{_mandir}/man8/crmadmin.8*
 %{_mandir}/man8/fence_legacy.8*
+%{_mandir}/man8/fence_watchdog.8*
 %{_mandir}/man8/iso8601.8*
 %{_mandir}/man8/stonith_admin.8*
 %if %{with servicelog}
@@ -370,7 +368,6 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ifspeed
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/o2cb
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ping
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/pingd
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/remote
 
 %dir /var/lib/%{name}
@@ -454,7 +451,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/pacemaker-remoted
 %attr(755,root,root) %{_sbindir}/pacemaker_remoted
-%attr(755,root,root) /etc/rc.d/init.d/pacemaker_remote
 %{systemdunitdir}/pacemaker_remote.service
 %{_mandir}/man8/pacemaker-remoted.8*
 
@@ -464,6 +460,7 @@ fi
 %attr(755,root,root) %{_sbindir}/pacemakerd
 %attr(755,root,root) /etc/rc.d/init.d/%{name}
 %{systemdunitdir}/%{name}.service
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/pacemaker
 %{_mandir}/man8/pacemakerd.8*
 %endif
 
