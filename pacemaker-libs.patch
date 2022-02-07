@@ -169,3 +169,25 @@
  
  cib_SOURCES	= io.c messages.c notify.c \
  		callbacks.c main.c remote.c common.c
+--- pacemaker-Pacemaker-1.1.24/lib/transition/Makefile.am.orig	2020-12-03 16:37:50.000000000 +0100
++++ pacemaker-Pacemaker-1.1.24/lib/transition/Makefile.am	2022-02-07 17:40:24.372315923 +0100
+@@ -28,7 +28,7 @@ libtransitioner_la_CPPFLAGS	= -I$(top_bu
+ libtransitioner_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
+ libtransitioner_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
+ 
+-libtransitioner_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la
++libtransitioner_la_LIBADD	= $(top_builddir)/lib/common/libcrmcommon.la $(top_builddir)/lib/lrmd/liblrmd.la
+ libtransitioner_la_SOURCES	= unpack.c graph.c utils.c
+ 
+ clean-generic:
+--- pacemaker-Pacemaker-1.1.24/lib/Makefile.am.orig	2020-12-03 16:37:50.000000000 +0100
++++ pacemaker-Pacemaker-1.1.24/lib/Makefile.am	2022-02-07 17:45:16.017402612 +0100
+@@ -29,7 +29,7 @@ clean-local:
+ 	rm -f $(PC_FILES)
+ 
+ ## Subdirectories...
+-SUBDIRS	= gnu common pengine transition cib services fencing lrmd cluster
++SUBDIRS	= gnu common pengine cib services fencing lrmd transition cluster
+ DIST_SUBDIRS = $(SUBDIRS)
+ 
+ if BUILD_CS_PLUGIN
