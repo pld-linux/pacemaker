@@ -1,12 +1,12 @@
---- pacemaker-Pacemaker-2.0.3/configure.ac.orig	2020-05-27 21:20:14.380073396 +0200
-+++ pacemaker-Pacemaker-2.0.3/configure.ac	2020-05-27 21:24:07.088812705 +0200
-@@ -713,27 +713,7 @@
+--- pacemaker-Pacemaker-2.1.2/configure.ac.orig	2022-02-07 20:17:17.317988287 +0100
++++ pacemaker-Pacemaker-2.1.2/configure.ac	2022-02-07 20:19:04.630740257 +0100
+@@ -873,28 +873,7 @@ if test x"${HELP2MAN}" != x""; then
      PCMK_FEATURES="$PCMK_FEATURES generated-manpages"
  fi
  
 -MANPAGE_XSLT=""
 -if test x"${XSLTPROC}" != x""; then
--    AC_MSG_CHECKING(docbook to manpage transform)
+-    AC_MSG_CHECKING([for DocBook-to-manpage transform])
 -    # first try to figure out correct template using xmlcatalog query,
 -    # resort to extensive (semi-deterministic) file search if that fails
 -    DOCBOOK_XSL_URI='http://docbook.sourceforge.net/release/xsl/current'
@@ -15,9 +15,10 @@
 -                   | sed -n 's|^file://||p;q')
 -    if test x"${MANPAGE_XSLT}" = x""; then
 -        DIRS=$(find "${datadir}" -name $(basename $(dirname ${DOCBOOK_XSL_PATH})) \
--               -type d | LC_ALL=C sort)
+-               -type d 2>/dev/null | LC_ALL=C sort)
 -        XSLT=$(basename ${DOCBOOK_XSL_PATH})
--        for d in ${DIRS}; do
+-        for d in ${DIRS}
+-        do
 -            if test -f "${d}/${XSLT}"; then
 -                 MANPAGE_XSLT="${d}/${XSLT}"
 -                 break
@@ -26,6 +27,6 @@
 -    fi
 -fi
 +MANPAGE_XSLT="/usr/share/sgml/docbook/xsl-stylesheets/manpages/docbook.xsl"
- AC_MSG_RESULT($MANPAGE_XSLT)
+ AC_MSG_RESULT([$MANPAGE_XSLT])
  AC_SUBST(MANPAGE_XSLT)
  
