@@ -15,20 +15,19 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.0.3
+Version:	2.0.5
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	4fee89ca3485f3bf27689ad9bd1670cb
+# Source0-md5:	c36c8ed401e39ff3e727ba4bf5fcc2e7
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
-Patch0:		%{name}-inkscape.patch
 Patch1:		%{name}-manpage_xslt.patch
 Patch2:		%{name}-update.patch
-URL:		http://clusterlabs.org/wiki/Main_Page
+URL:		https://wiki.clusterlabs.org/wiki/Pacemaker
 %{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
 BuildRequires:	autoconf >= 2.64
@@ -188,7 +187,6 @@ Dokumentacja do Pacemakera.
 
 %prep
 %setup -qn pacemaker-Pacemaker-%{version}
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
@@ -225,7 +223,7 @@ touch $RPM_BUILD_ROOT/var/log/pacemaker.log
 
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/pacemaker/tests
 # package as %doc
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,acls.*,crm_fencing.*,licenses}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,crm_fencing.*,licenses}
 
 install -D %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %if %{with corosync}
