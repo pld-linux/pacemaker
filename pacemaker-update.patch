@@ -1,8 +1,8 @@
---- pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c.orig	2013-07-26 02:02:31.000000000 +0200
-+++ pacemaker-Pacemaker-1.1.10/tools/notifyServicelogEvent.c	2013-09-07 22:08:44.162036132 +0200
-@@ -31,13 +31,13 @@
+--- pacemaker-Pacemaker-1.1.24/tools/notifyServicelogEvent.c.orig	2020-12-03 16:37:50.000000000 +0100
++++ pacemaker-Pacemaker-1.1.24/tools/notifyServicelogEvent.c	2022-02-08 21:46:52.110664895 +0100
+@@ -23,13 +23,13 @@
  #include <crm/common/util.h>
- #include <crm_internal.h>
+ #include <crm/attrd.h>
  
 -typedef enum { STATUS_GREEN = 1, STATUS_YELLOW, STATUS_RED } STATUS;
 +typedef enum { STATUS_GREEN = 1, STATUS_YELLOW, STATUS_RED } STATUS_T;
@@ -18,7 +18,7 @@
  {
      switch (status) {
          default:
-@@ -50,10 +50,10 @@
+@@ -42,10 +42,10 @@ status2char(STATUS status)
      }
  }
  
@@ -31,7 +31,7 @@
  
      crm_debug("Severity = %d, Disposition = %d", event->severity, event->disposition);
  
-@@ -153,7 +153,7 @@
+@@ -145,7 +145,7 @@ main(int argc, char *argv[])
      }
  
      if (rc == 0) {

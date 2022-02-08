@@ -115,17 +115,17 @@
  # libcib for get_object_root()
  #		$(top_builddir)/lib/hbclient/libhbclient.la
  pengine_SOURCES	= main.c
---- pacemaker-Pacemaker-1.1.19/lib/common/Makefile.am.orig	2018-09-02 14:46:36.066795934 +0200
-+++ pacemaker-Pacemaker-1.1.19/lib/common/Makefile.am	2018-09-02 14:48:38.040127875 +0200
-@@ -35,7 +35,7 @@
+--- pacemaker-Pacemaker-1.1.24/lib/common/Makefile.am.orig	2022-02-08 21:47:15.161859798 +0100
++++ pacemaker-Pacemaker-1.1.24/lib/common/Makefile.am	2022-02-08 21:49:50.566582176 +0100
+@@ -40,7 +40,7 @@ libcrmcommon_la_LDFLAGS	= -version-info
  libcrmcommon_la_CFLAGS	= $(CFLAGS_HARDENED_LIB)
  libcrmcommon_la_LDFLAGS	+= $(LDFLAGS_HARDENED_LIB)
  
 -libcrmcommon_la_LIBADD	= @LIBADD_DL@ $(GNUTLSLIBS)
 +libcrmcommon_la_LIBADD	= @LIBADD_DL@ $(LIBPLUMB) $(GNUTLSLIBS) $(LIBXML2) $(LIBXSLT) $(libqb_LIBS) $(LIBBZ2) $(LIBUUID) -lm
  
- libcrmcommon_la_SOURCES	= compat.c digest.c ipc.c io.c procfs.c utils.c xml.c	\
- 			  iso8601.c remote.c mainloop.c logging.c watchdog.c	\
+ # Use += rather than backlashed continuation lines for parsing by bumplibs.sh
+ libcrmcommon_la_SOURCES        =
 --- pacemaker-Pacemaker-1.1.16/lib/cib/Makefile.am.orig	2017-04-16 07:34:31.132737427 +0200
 +++ pacemaker-Pacemaker-1.1.16/lib/cib/Makefile.am	2017-04-16 07:39:18.802734141 +0200
 @@ -30,7 +30,7 @@
