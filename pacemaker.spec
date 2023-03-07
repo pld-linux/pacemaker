@@ -4,35 +4,25 @@
 #
 # Conditional build:
 %bcond_without	corosync	# Corosync stack support
-%bcond_without	servicelog	# ServiceLog support [IBM PPC specific]
-%bcond_without	ipmi		# IPMI ServiceLog support [IBM PPC specific]
 %bcond_without	doc		# documentation
 %bcond_without	static_libs	# static libraries
 #
-%ifnarch ppc ppc64
-%undefine	with_servicelog
-%endif
-%if %{without servicelog}
-%undefine	with_ipmi
-%endif
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.1.2
+Version:	2.1.5
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	544c832d5e3d136f74822d89f31f8110
+# Source0-md5:	cc945efffb080144fd7411163e2d8d6c
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-manpage_xslt.patch
-Patch2:		%{name}-update.patch
 URL:		https://wiki.clusterlabs.org/wiki/Pacemaker
-%{?with_ipmi:BuildRequires:	OpenIPMI-devel}
 BuildRequires:	asciidoc
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake >= 1:1.11
@@ -41,13 +31,12 @@ BuildRequires:	cluster-glue-libs-devel
 %{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
 BuildRequires:	dbus-devel
 BuildRequires:	docbook-style-xsl
-BuildRequires:	gettext-tools
+BuildRequires:	gettext-tools >= 0.18
 BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gnutls-devel >= 2.12.0
 BuildRequires:	help2man
 BuildRequires:	libltdl-devel
 BuildRequires:	libqb-devel >= 0.17.0
-%{?with_servicelog:BuildRequires:	libservicelog-devel}
 BuildRequires:	libtool >= 2:2
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.0
@@ -60,6 +49,7 @@ BuildRequires:	python3-devel >= 1:3.2
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
+BuildRequires:	sed >= 4.0
 BuildRequires:	systemd-units
 %if %{with doc}
 BuildRequires:	inkscape >= 1.0
@@ -193,9 +183,12 @@ Dokumentacja do Pacemakera.
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+
+%{__sed} -i -e '/po\/Makefile\.in/d' configure.ac
 
 %build
+install -d libltdl/config
+%{__gettextize}
 %{__libtoolize}
 %{__aclocal} -I m4
 %{__autoconf}
@@ -296,12 +289,6 @@ fi
 %attr(755,root,root) %{_sbindir}/fence_watchdog
 %attr(755,root,root) %{_sbindir}/iso8601
 %attr(755,root,root) %{_sbindir}/stonith_admin
-%if %{with servicelog}
-%if %{with ipmi}
-%attr(755,root,root) %{_sbindir}/ipmiservicelogd
-%endif
-%attr(755,root,root) %{_sbindir}/notifyServicelogEvent
-%endif
 %dir %{_libexecdir}/%{name}
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-exec-helper
 %attr(755,root,root) %{_libexecdir}/%{name}/cts-fence-helper
@@ -347,12 +334,6 @@ fi
 %{_mandir}/man8/fence_watchdog.8*
 %{_mandir}/man8/iso8601.8*
 %{_mandir}/man8/stonith_admin.8*
-%if %{with servicelog}
-%if %{with ipmi}
-%{_mandir}/man8/ipmiservicelogd.8*
-%endif
-%{_mandir}/man8/notifyServicelogEvent.8*
-%endif
 
 %dir %{_prefix}/lib/ocf/resource.d/pacemaker
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ClusterMon
@@ -362,7 +343,6 @@ fi
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/HealthSMART
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/Stateful
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SysInfo
-%attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/SystemHealth
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/attribute
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/controld
 %attr(755,root,root) %{_prefix}/lib/ocf/resource.d/pacemaker/ifspeed
