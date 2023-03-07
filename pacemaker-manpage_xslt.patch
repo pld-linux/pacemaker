@@ -1,31 +1,34 @@
---- pacemaker-Pacemaker-2.1.2/configure.ac.orig	2022-02-07 20:17:17.317988287 +0100
-+++ pacemaker-Pacemaker-2.1.2/configure.ac	2022-02-07 20:19:04.630740257 +0100
-@@ -873,28 +873,7 @@ if test x"${HELP2MAN}" != x""; then
-     PCMK_FEATURES="$PCMK_FEATURES generated-manpages"
- fi
+--- pacemaker-Pacemaker-2.1.5/configure.ac.orig	2023-03-03 22:39:47.226385171 +0100
++++ pacemaker-Pacemaker-2.1.5/configure.ac	2023-03-03 22:42:42.585435169 +0100
+@@ -828,31 +828,7 @@ AM_CONDITIONAL(BUILD_HELP, test x"${HELP
+ AS_IF([test x"${HELP2MAN}" != x""],
+       [PCMK_FEATURES="$PCMK_FEATURES generated-manpages"])
  
 -MANPAGE_XSLT=""
--if test x"${XSLTPROC}" != x""; then
--    AC_MSG_CHECKING([for DocBook-to-manpage transform])
--    # first try to figure out correct template using xmlcatalog query,
--    # resort to extensive (semi-deterministic) file search if that fails
--    DOCBOOK_XSL_URI='http://docbook.sourceforge.net/release/xsl/current'
--    DOCBOOK_XSL_PATH='manpages/docbook.xsl'
--    MANPAGE_XSLT=$(${XMLCATALOG} "" ${DOCBOOK_XSL_URI}/${DOCBOOK_XSL_PATH} \
--                   | sed -n 's|^file://||p;q')
--    if test x"${MANPAGE_XSLT}" = x""; then
--        DIRS=$(find "${datadir}" -name $(basename $(dirname ${DOCBOOK_XSL_PATH})) \
--               -type d 2>/dev/null | LC_ALL=C sort)
--        XSLT=$(basename ${DOCBOOK_XSL_PATH})
--        for d in ${DIRS}
--        do
--            if test -f "${d}/${XSLT}"; then
--                 MANPAGE_XSLT="${d}/${XSLT}"
--                 break
--            fi
--        done
--    fi
--fi
+-AS_IF([test x"${XSLTPROC}" != x""],
+-      [
+-          AC_MSG_CHECKING([for DocBook-to-manpage transform])
+-          # first try to figure out correct template using xmlcatalog query,
+-          # resort to extensive (semi-deterministic) file search if that fails
+-          DOCBOOK_XSL_URI='http://docbook.sourceforge.net/release/xsl/current'
+-          DOCBOOK_XSL_PATH='manpages/docbook.xsl'
+-          MANPAGE_XSLT=$(${XMLCATALOG} "" ${DOCBOOK_XSL_URI}/${DOCBOOK_XSL_PATH} \
+-                         | sed -n 's|^file://||p;q')
+-          AS_IF([test x"${MANPAGE_XSLT}" = x""],
+-                [
+-                    DIRS=$(find "${datadir}" -name $(basename $(dirname ${DOCBOOK_XSL_PATH})) \
+-                           -type d 2>/dev/null | LC_ALL=C sort)
+-                    XSLT=$(basename ${DOCBOOK_XSL_PATH})
+-                    for d in ${DIRS}
+-                    do
+-                        AS_IF([test -f "${d}/${XSLT}"],
+-                              [
+-                                  MANPAGE_XSLT="${d}/${XSLT}"
+-                                  break
+-                              ])
+-                    done
+-                ])
+-      ])
 +MANPAGE_XSLT="/usr/share/sgml/docbook/xsl-stylesheets/manpages/docbook.xsl"
  AC_MSG_RESULT([$MANPAGE_XSLT])
  AC_SUBST(MANPAGE_XSLT)
