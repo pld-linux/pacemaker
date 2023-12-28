@@ -5,6 +5,7 @@
 %bcond_without	servicelog	# ServiceLog support [IBM PPC specific]
 %bcond_without	ipmi		# IPMI ServiceLog support [IBM PPC specific]
 %bcond_without	doc		# documentation
+%bcond_without	static_libs	# static libraries
 #
 %ifnarch ppc ppc64
 %undefine	with_servicelog
@@ -83,7 +84,7 @@ Suggests:	pacemaker-shell
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Pacemaker makes use of your cluster infrastructure (either 
+Pacemaker makes use of your cluster infrastructure (either
 Corosync/OpenAIS or Heartbeat) to stop, start and monitor the health
 of the services (aka. resources) you want the cluster to provide.
 
@@ -223,6 +224,7 @@ CPPFLAGS="%{rpmcppflags} %{?with_heartbeat:-I/usr/include/heartbeat}"
 %configure \
 	--disable-fatal-warnings \
 	--disable-silent-rules \
+	%{__enable_disable static_libs static} \
 	--enable-systemd \
 	--disable-upstart \
 	--with-acl \
@@ -450,6 +452,7 @@ fi
 %{_pkgconfigdir}/pacemaker-pengine.pc
 %{_pkgconfigdir}/pacemaker-service.pc
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libcib.a
@@ -462,6 +465,7 @@ fi
 %{_libdir}/libpengine.a
 %{_libdir}/libstonithd.a
 %{_libdir}/libtransitioner.a
+%endif
 
 %files remote
 %defattr(644,root,root,755)
