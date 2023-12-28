@@ -67,6 +67,7 @@ BuildRequires:	pam-devel
 BuildRequires:	pciutils-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	systemd-units
@@ -194,6 +195,7 @@ Ten pakiet pozwala na używanie Pacemakera na klastrze Corosync.
 Summary:	Pacemaker documentation
 Summary(pl.UTF-8):	Dokumentacja do Pacemakera
 Group:		Documentation
+BuildArch:	noarch
 
 %description doc
 Pacemaker documentation.
