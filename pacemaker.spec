@@ -10,42 +10,42 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.1.5
+Version:	2.1.7
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	cc945efffb080144fd7411163e2d8d6c
+# Source0-md5:	f91bd46791c8b302e82e8eb608770238
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
-Patch0:		%{name}-link.patch
-Patch1:		%{name}-manpage_xslt.patch
+Patch0:		%{name}-manpage_xslt.patch
 URL:		https://wiki.clusterlabs.org/wiki/Pacemaker
 BuildRequires:	asciidoc
 BuildRequires:	autoconf >= 2.64
-BuildRequires:	automake >= 1:1.11
+BuildRequires:	automake >= 1:1.13
 BuildRequires:	bzip2-devel
 BuildRequires:	cluster-glue-libs-devel
 %{?with_corosync:BuildRequires:	corosync-devel >= 2.0}
-BuildRequires:	dbus-devel
+BuildRequires:	dbus-devel >= 1.5.12
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-tools >= 0.18
-BuildRequires:	glib2-devel >= 1:2.32.0
+BuildRequires:	glib2-devel >= 1:2.42.0
 BuildRequires:	gnutls-devel >= 2.12.0
 BuildRequires:	help2man
 BuildRequires:	libltdl-devel
 BuildRequires:	libqb-devel >= 0.17.0
 BuildRequires:	libtool >= 2:2
 BuildRequires:	libuuid-devel
-BuildRequires:	libxml2-devel >= 2.0
+BuildRequires:	libxml2-devel >= 1:2.6.0
+BuildRequires:	libxml2-progs >= 1:2.6.0
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	pam-devel
-BuildRequires:	pkgconfig
-BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	pkgconfig >= 1:0.27
+BuildRequires:	python3-devel >= 1:3.4
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
@@ -53,9 +53,10 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	systemd-units
 %if %{with doc}
 BuildRequires:	inkscape >= 1.0
-BuildRequires:	publican
+BuildRequires:	sphinx-pdg >= 2
 %endif
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	python3-pacemaker = %{version}-%{release}
 Requires:	cluster-glue
 Requires:	resource-agents
 Suggests:	pacemaker-shell
@@ -92,7 +93,7 @@ Pacemaker był wcześniej częścią pakietu Heartbeat.
 Summary:	Pacemaker libraries
 Summary(pl.UTF-8):	Biblioteki Pacemakera
 Group:		Libraries
-Requires:	glib2 >= 1:2.32.0
+Requires:	glib2 >= 1:2.42.0
 Requires:	gnutls-libs >= 2.12.0
 Requires:	libqb >= 0.17.0
 
@@ -108,11 +109,11 @@ Summary(pl.UTF-8):	Pliki nagłówkowe bibliotek Pacemakera
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	bzip2-devel
-Requires:	dbus-devel
-Requires:	glib2-devel >= 1:2.32.0
+Requires:	dbus-devel >= 1.5.12
+Requires:	glib2-devel >= 1:2.42.0
 Requires:	gnutls-devel >= 2.12.0
 Requires:	libqb-devel >= 0.17.0
-Requires:	libxml2-devel >= 2.0
+Requires:	libxml2-devel >= 1:2.6.0
 Requires:	libxslt-devel
 Requires:	libuuid-devel
 Requires:	ncurses-devel
@@ -134,6 +135,20 @@ Static Pacemaker libraries.
 
 %description static -l pl.UTF-8
 Statyczne biblioteki Pacemakera.
+
+%package -n python3-pacemaker
+Summary:	Python API for Pacemaker
+Summary(pl.UTF-8):	API Pythona dla Pacemakera
+Group:		Libraries/Python
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	python3-modules >= 1:3.4
+BuildArch:	noarch
+
+%description -n python3-pacemaker
+Python API for Pacemaker.
+
+%description -n python3-pacemaker -l pl.UTF-8
+API Pythona dla Pacemakera.
 
 %package remote
 Summary:	Remote services manager for Pacemaker
@@ -182,7 +197,6 @@ Dokumentacja do Pacemakera.
 %prep
 %setup -qn pacemaker-Pacemaker-%{version}
 %patch0 -p1
-%patch1 -p1
 
 %{__sed} -i -e '/po\/Makefile\.in/d' configure.ac
 
@@ -302,7 +316,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-schedulerd
 %{_datadir}/pacemaker
 %{_datadir}/mibs/PCMK-MIB.txt
-%{py3_sitescriptdir}/cts
 %{systemdunitdir}/crm_mon.service
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/pacemaker
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/crm_mon
@@ -427,6 +440,10 @@ fi
 %{_libdir}/libstonithd.a
 %endif
 
+%files -n python3-pacemaker
+%defattr(644,root,root,755)
+%{py3_sitescriptdir}/pacemaker
+
 %files remote
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/pacemaker-remoted
@@ -452,5 +469,6 @@ fi
 %{_docdir}/pacemaker/Pacemaker_Administration
 %{_docdir}/pacemaker/Pacemaker_Development
 %{_docdir}/pacemaker/Pacemaker_Explained
+%{_docdir}/pacemaker/Pacemaker_Python_API
 %{_docdir}/pacemaker/Pacemaker_Remote
 %endif
