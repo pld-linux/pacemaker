@@ -230,11 +230,17 @@ install -d $RPM_BUILD_ROOT{/var/run/crm,/var/log}
 	mibdir=%{_datadir}/mibs \
 	DESTDIR=$RPM_BUILD_ROOT
 
-touch $RPM_BUILD_ROOT/var/log/pacemaker.log
+# obsoleted by pkg-config
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
 
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/pacemaker/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitescriptdir}/pacemaker/_cts/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitescriptdir}/pacemaker/_cts/test.py
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitescriptdir}/pacemaker/_cts/__pycache__/test.*.py*
 # package as %doc
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,crm_fencing.*,licenses}
+
+touch $RPM_BUILD_ROOT/var/log/pacemaker.log
 
 install -D %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %if %{with corosync}
@@ -405,15 +411,6 @@ fi
 %attr(755,root,root) %{_libdir}/libpe_rules.so
 %attr(755,root,root) %{_libdir}/libpe_status.so
 %attr(755,root,root) %{_libdir}/libstonithd.so
-%{_libdir}/libcib.la
-%{_libdir}/libcrmcluster.la
-%{_libdir}/libcrmcommon.la
-%{_libdir}/libcrmservice.la
-%{_libdir}/liblrmd.la
-%{_libdir}/libpacemaker.la
-%{_libdir}/libpe_rules.la
-%{_libdir}/libpe_status.la
-%{_libdir}/libstonithd.la
 %{_includedir}/pacemaker
 %{_pkgconfigdir}/libpacemaker.pc
 %{_pkgconfigdir}/pacemaker.pc
