@@ -10,13 +10,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.1.7
-Release:	2
+Version:	2.1.9
+Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	f91bd46791c8b302e82e8eb608770238
+# Source0-md5:	a0635acd8475f8798473051d26075c0d
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -55,6 +55,8 @@ BuildRequires:	systemd-units
 BuildRequires:	inkscape >= 1.0
 BuildRequires:	sphinx-pdg >= 2
 %endif
+# due to %{_libdir} in library search path binaries run during build must see only newly built libs
+BuildConflicts:	pacemaker-libs < 2.1.9
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	python3-pacemaker = %{version}-%{release}
 Requires:	cluster-glue
@@ -238,7 +240,7 @@ install -d $RPM_BUILD_ROOT{/var/run/crm,/var/log}
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitescriptdir}/pacemaker/_cts/test.py
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitescriptdir}/pacemaker/_cts/__pycache__/test.*.py*
 # package as %doc
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,crm_fencing.*,licenses}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/pacemaker/{COPYING,README.markdown,licenses}
 
 touch $RPM_BUILD_ROOT/var/log/pacemaker.log
 
@@ -286,7 +288,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog README.markdown doc/*.html doc/security.txt
+%doc ChangeLog README.markdown doc/security.txt
 %attr(755,root,root) %{_sbindir}/attrd_updater
 %attr(755,root,root) %{_sbindir}/cibadmin
 %attr(755,root,root) %{_sbindir}/crm_attribute
@@ -328,6 +330,7 @@ fi
 %attr(750,root,haclient) %dir %{_sysconfdir}/pacemaker
 %ghost /var/log/pacemaker.log
 %{_mandir}/man7/ocf_pacemaker_*.7*
+%{_mandir}/man7/pacemaker-based.7*
 %{_mandir}/man7/pacemaker-controld.7*
 %{_mandir}/man7/pacemaker-fenced.7*
 %{_mandir}/man7/pacemaker-schedulerd.7*
