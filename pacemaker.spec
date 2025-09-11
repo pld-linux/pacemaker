@@ -6,6 +6,7 @@
 %bcond_without	corosync	# Corosync stack support
 %bcond_without	doc		# documentation
 %bcond_without	static_libs	# static libraries
+%bcond_without	systemd		# systemd
 #
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
@@ -217,7 +218,7 @@ install -d libltdl/config
 	--disable-fatal-warnings \
 	--disable-silent-rules \
 	%{__enable_disable static_libs static} \
-	--enable-systemd \
+	%{__enable_disable systemd} \
 	--disable-upstart \
 	--with-corosync%{!?with_corosync:=no} \
 	--with-initdir=/etc/rc.d/init.d
@@ -324,7 +325,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/pacemaker-schedulerd
 %{_datadir}/pacemaker
 %{_datadir}/mibs/PCMK-MIB.txt
+%if %{with systemd}
 %{systemdunitdir}/crm_mon.service
+%endif
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/pacemaker
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/crm_mon
 %attr(750,root,haclient) %dir %{_sysconfdir}/pacemaker
@@ -448,7 +451,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/pacemaker-remoted
 %attr(755,root,root) %{_sbindir}/pacemaker_remoted
+%if %{with systemd}
 %{systemdunitdir}/pacemaker_remote.service
+%endif
 %{_mandir}/man8/pacemaker-remoted.8*
 
 %if %{with corosync}
