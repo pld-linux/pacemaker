@@ -11,13 +11,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.1.9
-Release:	5
+Version:	2.1.10
+Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	a0635acd8475f8798473051d26075c0d
+# Source0-md5:	9d15dd61776829d2a4bf06290716f710
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -387,36 +387,36 @@ fi
 
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcib.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcib.so.27
-%attr(755,root,root) %{_libdir}/libcrmcluster.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcrmcluster.so.29
-%attr(755,root,root) %{_libdir}/libcrmcommon.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcrmcommon.so.34
-%attr(755,root,root) %{_libdir}/libcrmservice.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcrmservice.so.28
-%attr(755,root,root) %{_libdir}/liblrmd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/liblrmd.so.28
-%attr(755,root,root) %{_libdir}/libpacemaker.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpacemaker.so.1
-%attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.26
-%attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.28
-%attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libstonithd.so.26
+%{_libdir}/libcib.so.*.*.*
+%ghost %{_libdir}/libcib.so.27
+%{_libdir}/libcrmcluster.so.*.*.*
+%ghost %{_libdir}/libcrmcluster.so.29
+%{_libdir}/libcrmcommon.so.*.*.*
+%ghost %{_libdir}/libcrmcommon.so.34
+%{_libdir}/libcrmservice.so.*.*.*
+%ghost %{_libdir}/libcrmservice.so.28
+%{_libdir}/liblrmd.so.*.*.*
+%ghost %{_libdir}/liblrmd.so.28
+%{_libdir}/libpacemaker.so.*.*.*
+%ghost %{_libdir}/libpacemaker.so.1
+%{_libdir}/libpe_rules.so.*.*.*
+%ghost %{_libdir}/libpe_rules.so.26
+%{_libdir}/libpe_status.so.*.*.*
+%ghost %{_libdir}/libpe_status.so.28
+%{_libdir}/libstonithd.so.*.*.*
+%ghost %{_libdir}/libstonithd.so.26
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcib.so
-%attr(755,root,root) %{_libdir}/libcrmcluster.so
-%attr(755,root,root) %{_libdir}/libcrmcommon.so
-%attr(755,root,root) %{_libdir}/libcrmservice.so
-%attr(755,root,root) %{_libdir}/liblrmd.so
-%attr(755,root,root) %{_libdir}/libpacemaker.so
-%attr(755,root,root) %{_libdir}/libpe_rules.so
-%attr(755,root,root) %{_libdir}/libpe_status.so
-%attr(755,root,root) %{_libdir}/libstonithd.so
+%{_libdir}/libcib.so
+%{_libdir}/libcrmcluster.so
+%{_libdir}/libcrmcommon.so
+%{_libdir}/libcrmservice.so
+%{_libdir}/liblrmd.so
+%{_libdir}/libpacemaker.so
+%{_libdir}/libpe_rules.so
+%{_libdir}/libpe_status.so
+%{_libdir}/libstonithd.so
 %{_includedir}/pacemaker
 %{_pkgconfigdir}/libpacemaker.pc
 %{_pkgconfigdir}/pacemaker.pc
