@@ -11,13 +11,13 @@
 Summary:	The scalable High-Availability cluster resource manager
 Summary(pl.UTF-8):	Skalowalny zarządca zasobów klastrów o wysokiej dostępności
 Name:		pacemaker
-Version:	2.1.10
+Version:	2.1.11
 Release:	1
 License:	GPL v2+, LGPL v2.1+
 Group:		Applications/System
 #Source0Download: https://github.com/ClusterLabs/pacemaker/releases
 Source0:	https://github.com/ClusterLabs/pacemaker/archive/Pacemaker-%{version}.tar.gz
-# Source0-md5:	9d15dd61776829d2a4bf06290716f710
+# Source0-md5:	8cb5163723be757e8b1cf531c9e945aa
 Source1:	%{name}.tmpfiles
 Source2:	%{name}.init
 Source3:	%{name}.service
@@ -56,7 +56,7 @@ BuildRequires:	systemd-units
 BuildRequires:	inkscape >= 1.0
 BuildRequires:	sphinx-pdg >= 2
 %endif
-# due to %{_libdir} in library search path binaries run during build must see only newly built libs
+# due to %%{_libdir} in library search path binaries run during build must see only newly built libs
 BuildConflicts:	pacemaker-libs < 2.1.9
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	python3-pacemaker = %{version}-%{release}
